@@ -1,0 +1,30 @@
+#! /bin/sh
+# netmon agent
+#
+# Hannes Nagel, 2012
+# specific agent implementation somehow motivated from check_mk
+
+# sever "one-line" system information snippets
+echo "--- system ---"
+hostname
+echo "netmon-agent 0.0"
+uptime
+cat /proc/uptime
+cat /proc/loadavg
+echo "--- end system ---"
+
+# /proc/cpuinfo (possibly stripped down to interesting values)
+echo "--- cpuinfo ---"
+cat /proc/cpuinfo
+# egrep '^\(processor|vendor_id|cpu family|model|model_name|stepping|cpu MHz|cache size|physical id|siblings|core id|cpu cores|bogomips\)' /proc/cpuinfo
+echo "--- end cpuinfo ---"
+
+# memory information
+echo "--- memory ---"
+cat /proc/meminfo
+echo "--- end memory ---"
+
+# the process list -- most important information here
+echo "--- processes ---"
+ps -G users ux
+echo "--- end processes ---"
