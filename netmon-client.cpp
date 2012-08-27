@@ -47,11 +47,6 @@ int main( int argc, char** argv )
 	const int buffer_size = 1024;
 	char buffer[buffer_size];
 
-  /* server address */ 
-  serv_name.sin_family = AF_INET;
-  inet_aton(argv[1], &serv_name.sin_addr);
-  serv_name.sin_port = htons(atoi(argv[2]));
-
   /* connect to the server */
   // status = connect(sockd, // (struct sockaddr*)
   //                  &serv_name, sizeof(serv_name));
