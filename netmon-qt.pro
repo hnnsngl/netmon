@@ -14,6 +14,8 @@ TARGET =
 QMAKE_CXXFLAGS += -std=c++0x
 
 # Input
-HEADERS += netgroup.hpp netmon-qt-window.hpp
-SOURCES += netmon-qt.cpp netmon-qt-window.cpp
+HEADERS += netmon-qt-window.hpp netmon-qt-models.hpp \
+           netgroup.hpp netmon-types.hpp
+SOURCES += netmon-qt.cpp netmon-qt-window.cpp netmon-qt-models.cpp \
+           netmon-types.cpp
 
