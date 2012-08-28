@@ -1,0 +1,4 @@
+moc_*
+netmon-qt
+*.o
+netmon-client
