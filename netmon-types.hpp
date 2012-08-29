@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 
-struct processListItem {
+struct ProcessListItem {
 	// UID    username
 	// PID    process id
 	// PPID   parent process id
@@ -22,7 +22,7 @@ struct processListItem {
 	processListItem( std::string columns, std::string items );
 };
 
-struct hostListItem {
+struct HostListItem {
 	std::string hostname;
 	std::string cpuname;					// "Core2", "Athlon", ...
 	std::string memory;						// "4020MB"
@@ -36,10 +36,9 @@ struct hostListItem {
 	std::string cpuinfo;					// complete /dev/cpuinfo for tooltip or something
 	std::string meminfo;					// complete /dev/meminfo for tooltip or something
 
-	std::vector< processListItem > processList;
-
 	// hostListItem( std::string agentString );
 	hostListItem( std::string hostname );
 };
 
-// std::vector< hostListItem > 
+typedef std::map< std::string, std::vector< ProcessListItem > ProcessList;
+typedef std::map< std::string, HostListItem > HostList;
