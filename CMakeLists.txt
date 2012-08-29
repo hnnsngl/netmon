@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 2.6)
 PROJECT(NetMon)
 
+# SET(CMAKE_VERBOSE_MAKEFILE true)
+
 # looking for boost
 
 #path to boost with cmake -DBOOST_ROOT=/past/to/boost
@@ -30,5 +32,10 @@ add_library(socket src/socket.cpp)
 
 set(CORELIBS socket ${Boost_LIBRARIES})
 
+# include general stuff
+
+include_directories ( src )
+
 add_subdirectory(src)
 add_subdirectory(bin)
+add_subdirectory(netmon-qt)
