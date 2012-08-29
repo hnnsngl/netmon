@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "netgroup.hpp"
+#include "../src/netgroup.hpp"
 
 int main( int argc, char** argv )
 {
