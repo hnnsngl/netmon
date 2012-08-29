@@ -19,7 +19,7 @@ struct ProcessListItem {
 
 	std::map<std::string, std::string> items;
 
-	processListItem( std::string columns, std::string items );
+	ProcessListItem( std::string columns, std::string items );
 };
 
 struct HostListItem {
@@ -37,8 +37,8 @@ struct HostListItem {
 	std::string meminfo;					// complete /dev/meminfo for tooltip or something
 
 	// hostListItem( std::string agentString );
-	hostListItem( std::string hostname );
+	HostListItem( std::string hostname );
 };
 
-typedef std::map< std::string, std::vector< ProcessListItem > ProcessList;
+typedef std::map< std::string, std::vector< ProcessListItem > > ProcessList;
 typedef std::map< std::string, HostListItem > HostList;
