@@ -1,7 +1,8 @@
 #include "netmon-types.hpp"
 
-#include<QMainWindow>
-#include<QWidget>
+#include <QMainWindow>
+#include <QObject>
+#include <QWidget>
 
 
 class QAction;
@@ -18,10 +19,12 @@ class NetmonProcessListModel;
 
 class NetmonWindow : public QMainWindow
 {
-	Q_OBJECT ;
+	// Q_OBJECT
 
 public:
-	NetmonWindow( int argc, char** argv );
+	NetmonWindow();
+	// NetmonWindow( int argc, char** argv );
+	virtual ~NetmonWindow();
 
 private:
 	QToolBox *toolbox;

@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 2.6)
 PROJECT(NetMon)
 
+# SET(CMAKE_VERBOSE_MAKEFILE true)
+
 # looking for boost
 
 #path to boost with cmake -DBOOST_ROOT=/past/to/boost
@@ -26,5 +28,10 @@ add_definitions(-pedantic -Wall -O2 -g -funroll-loops -std=c++0x -static )
 link_directories    ( ${Boost_LIBRARY_DIRS} )
 include_directories ( ${Boost_INCLUDE_DIRS} )
 
+# include general stuff
+
+include_directories ( src )
+
 add_subdirectory(src)
 add_subdirectory(bin)
+add_subdirectory(netmon-qt)
