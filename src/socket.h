@@ -35,7 +35,6 @@ public:
   bool connect( const std::string host, const int port );
   bool send( const std::string ) const;
   int  recv( std::string& ) const;
-  std::string recv_until_close() const; 
   bool close() const;
   void cleanup() const;
   bool is_valid() const { return m_sock != -1; }

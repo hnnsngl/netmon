@@ -121,24 +121,6 @@ int Socket::recv( std::string& s ) const {
   }
 }
 
-/// recive data via TCP
-std::string Socket::recv_until_close() const {
-  char buf [ MAXRECV + 1 ];
-  std::string s("");
-  int status = 1;
-  memset( buf, 0, MAXRECV +1);
-  while( (status = ::recv(m_sock, buf, MAXRECV, 0) ) != 0){
-    if( status > 0 || status != -1 ){
-      s += buf;
-      memset( buf, 0, MAXRECV +1);
-    }else{
-      throw("Error in Socket::recv_until_close");
-      return "";
-    }
-  }
-  return s;
-}
-
 void Socket::cleanup() const {}
 
 /// close socket
