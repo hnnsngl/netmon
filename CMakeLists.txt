@@ -26,5 +26,9 @@ add_definitions(-pedantic -Wall -O2 -g -funroll-loops -std=c++0x -static )
 link_directories    ( ${Boost_LIBRARY_DIRS} )
 include_directories ( ${Boost_INCLUDE_DIRS} )
 
+add_library(socket src/socket.cpp)
+
+set(CORELIBS socket ${Boost_LIBRARIES})
+
 add_subdirectory(src)
 add_subdirectory(bin)
