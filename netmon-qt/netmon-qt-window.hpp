@@ -1,4 +1,5 @@
 #include "netmon-types.hpp"
+#include <map>
 
 #include <QMainWindow>
 #include <QObject>
