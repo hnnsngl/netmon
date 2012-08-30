@@ -1,6 +1,7 @@
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <string>
+#include <mutex>
 
 struct ProcessListItem {
 	// UID    username
@@ -17,9 +18,11 @@ struct ProcessListItem {
 	// TIME   
 	// CMD
 
-	std::map<std::string, std::string> items;
+	std::unordered_map<std::string, std::string> items;
 
-	ProcessListItem( std::string columns, std::string items );
+	ProcessListItem()
+	  : items({ {"UID", "NoInfo"}, {"PID", "NoInfo"} })
+    {}
 };
 
 struct HostListItem {
@@ -36,9 +39,18 @@ struct HostListItem {
 	std::string cpuinfo;					// complete /dev/cpuinfo for tooltip or something
 	std::string meminfo;					// complete /dev/meminfo for tooltip or something
 
-	// hostListItem( std::string agentString );
-	HostListItem( std::string hostname );
+  std::vector<ProcessListItem>  ProcessList;
+
+	HostListItem()
+	  : hostname("None"), cpuname("NoInfo"), memory("NoInfo"), uptime("NoInfo"),
+	    processors(1), avgload1(0), avgload2(0), avgload3(0), 
+	    cpuinfo("NoInfo"), meminfo("NoInfo")
+  {}
+	HostListItem( const std::string& hostname_ )
+	  : hostname(hostname_), cpuname("NoInfo"), memory("NoInfo"), uptime("NoInfo"),
+	    processors(1), avgload1(0), avgload2(0), avgload3(0), 
+	    cpuinfo("NoInfo"), meminfo("NoInfo")
+  {}
 };
 
-typedef std::map< std::string, std::vector< ProcessListItem > > ProcessList;
-typedef std::map< std::string, HostListItem > HostList;
+typedef std::unordered_map< std::string, HostListItem > HostList;
