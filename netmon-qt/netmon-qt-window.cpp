@@ -1,5 +1,6 @@
 #include "netmon-qt-window.hpp"
-#include "netmon-qt-models.hpp"
+#include "hostlistmodel.hpp"
+#include "processlistmodel.hpp"
 
 #include <QObject>
 #include <QAction>
@@ -11,6 +12,9 @@
 #include <QTreeView>
 #include <QMainWindow>
 #include <QApplication>
+#include <QKeyEvent>
+#include <QPushButton>
+#include <QToolBar>
 
 NetmonWindow::NetmonWindow()
 {
@@ -23,7 +27,8 @@ NetmonWindow::NetmonWindow()
 	toolbox->addItem( frame_hostlist, tr("Hosts") );
 	QVBoxLayout *layout_hostlist = new QVBoxLayout(frame_hostlist);
 	QTreeView *view_hostlist = new QTreeView(frame_hostlist);
-	// view_hostlist->setModel( model_hostlist );
+	model_hostlist = new NetmonHostlistModel(this);
+	view_hostlist->setModel( model_hostlist );
 	layout_hostlist->addWidget(view_hostlist);
 
 	/* processes frame */
@@ -31,29 +36,30 @@ NetmonWindow::NetmonWindow()
 	toolbox->addItem( frame_processes, tr("Processes") );
 	QVBoxLayout *layout_processes = new QVBoxLayout(frame_processes);
 	QTableView *view_processes = new QTableView(frame_processes);
+	model_processes = new NetmonProcessListModel(this);
 	// view_processes->setModel( model_processes );
 	layout_processes->addWidget(view_processes);
 
-	// no need for a "my processes" frame - if we just add an option to filter processes in this way
-	// /** settings frame */
-	// QFrame *frame_myprocs = new QFrame(toolbox);
-	// toolbox->addItem( frame_myprocs, tr("My Processes") );
-	// QVBoxLayout *layout_myprocs = new QVBoxLayout(frame_myprocs);
-	// QTableView *view_myprocs = new QTableView(frame_myprocs);
-	// view_myprocs->setModel( model_myprocs )
-	// layout_myprocs->addWidget(table_myprocs);
-
 	/** settings frame */
 	QFrame *frame_settings = new QFrame(toolbox);
-	QVBoxLayout *layout_settings = new QVBoxLayout(frame_settings);
 	toolbox->addItem( frame_settings, tr("Settings") );
+	QVBoxLayout *layout_settings = new QVBoxLayout(frame_settings);
+	QPushButton* button = new QPushButton( "This Button does &Nothing", frame_settings );
+	layout_settings->addWidget(button);
 
-	// create and connect user actions
-	QAction *action;
+	/** actions */
+	main_exit = new QAction(tr("&Exit"), this);
+  main_exit->setIcon(QIcon(":/images/application-exit.png"));
+  main_exit->setShortcut(tr("Ctrl+Q"));
+  main_exit->setStatusTip(tr("Exit"));
+  connect(main_exit, SIGNAL(triggered()), qApp, SLOT(quit()));
 
-	action = new QAction(tr("Exit"), this);
-	action->setShortcut(tr("Ctrl+Q"));
-	connect(action, SIGNAL(triggered()), qApp, SLOT(closeAllWindows()));
+	/** toolbar */
+  mainToolBar = addToolBar(tr("&Netmon"));
+  mainToolBar->addAction(main_exit);
+
+  // filterToolbar = addToolBar(tr("&Filter"));
+  // filterToolbar->addAction(filter_own_processes);
 }
 
 NetmonWindow::~NetmonWindow()
@@ -61,3 +67,7 @@ NetmonWindow::~NetmonWindow()
 
 void NetmonWindow::createModels()
 {}
+
+void NetmonWindow::createToolbar()
+{
+}

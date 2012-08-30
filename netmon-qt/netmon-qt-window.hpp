@@ -1,5 +1,4 @@
 #include "netmon-types.hpp"
-#include <map>
 
 #include <QMainWindow>
 #include <QObject>
@@ -11,8 +10,8 @@ class QObject;
 class QHBoxLayout;
 class QTabWidget;
 class QToolBox;
-class QTableView;
 class QTreeView;
+class QToolBar;
 
 class NetmonHostlistModel;
 class NetmonProcessListModel;
@@ -33,8 +32,12 @@ private:
 	NetmonHostlistModel *model_hostlist;
 	NetmonProcessListModel *model_processes;
 
-	std::map<std::string, HostListItem> hosts;
+	QToolBar *mainToolBar, *filterToolbar;
+
+	QAction *main_exit;
+	QAction *filter_own_processes;
 
 	void createModels();
+	void createToolbar();
 	void createViews();
 };
