@@ -1,6 +1,3 @@
-moc_*
-netmon-qt
-*.o
+*~
 *.swp
-netmon-client
-build
+build/*
