@@ -7,7 +7,7 @@
 # sever "one-line" system information snippets
 echo "--- system ---"
 hostname
-echo "netmon-agent 0.0"
+echo "netmon-agent 0.1"
 uptime
 cat /proc/uptime
 cat /proc/loadavg
@@ -25,6 +25,31 @@ cat /proc/meminfo
 echo "--- end memory ---"
 
 # the process list -- most important information here
+#
+# all fields must be enclosed in angle brackets -- the below script
+# can do this, if no (except for the last) field contains any spaces.
+#
 echo "--- processes ---"
-ps -G users ux
+ps -eLF | awk \
+'NR==1{
+  columns = NF
+}
+/\<root\>/{
+  next
+}
+{
+	result = command = ""
+	for( i=1; i<columns; i++ ){
+		result = result "<" $i ">\t"
+	}
+
+	for( i=columns; i<=NF; i++ ){
+		if(command) command = command " "
+		command = command $i;
+	}
+	result = result "<" command ">"
+
+	print result
+}'
+
 echo "--- end processes ---"
