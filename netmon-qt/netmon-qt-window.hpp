@@ -19,7 +19,7 @@ class NetmonProcessListModel;
 
 class NetmonWindow : public QMainWindow
 {
-	// Q_OBJECT
+	Q_OBJECT
 
 public:
 	NetmonWindow();
