@@ -1,5 +1,5 @@
 moc_*
 *.o
+*~
 *.swp
-netmon-client
-build
+build/*

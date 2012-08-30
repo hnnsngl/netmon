@@ -4,10 +4,10 @@
 
 class NetmonHostlistModel : public QAbstractItemModel
 {
-	// Q_OBJECT
+	Q_OBJECT
 };
 
 class NetmonProcessListModel : public QAbstractItemModel
 {
-	// Q_OBJECT
+	Q_OBJECT
 };
