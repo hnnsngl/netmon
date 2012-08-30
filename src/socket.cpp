@@ -81,7 +81,7 @@ bool Socket::connect( const std::string host, const int port ){
     // convert adress in ip-address
     host_info = gethostbyname( host.c_str() );
     if( host_info == NULL ){
-      throw SockExcept("Unknown server.");
+      return false;
     }
     memcpy( (char *) &m_addr.sin_addr, host_info->h_addr, host_info->h_length);
   }
@@ -89,7 +89,7 @@ bool Socket::connect( const std::string host, const int port ){
   m_addr.sin_port = htons( port );
 
   int status = ::connect( m_sock, ( sockaddr * ) &m_addr, sizeof( m_addr ));
-  if ( status == 0 ){
+  if ( status != 0 ){
     return false;
   }else{
     return true;

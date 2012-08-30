@@ -1,3 +1,6 @@
+#ifndef  NETMON_TYPES_INC
+#define  NETMON_TYPES_INC
+
 #include <unordered_map>
 #include <vector>
 #include <string>
@@ -18,11 +21,7 @@ struct ProcessListItem {
 	// TIME   
 	// CMD
 
-	std::unordered_map<std::string, std::string> items;
-
-	ProcessListItem()
-	  : items({ {"UID", "NoInfo"}, {"PID", "NoInfo"} })
-    {}
+	std::vector<std::string> items;
 };
 
 struct HostListItem {
@@ -30,6 +29,7 @@ struct HostListItem {
 	std::string cpuname;					// "Core2", "Athlon", ...
 	std::string memory;						// "4020MB"
 	std::string uptime;						// "22 days, 11:31"
+  std::string agentversion;
 
 	int processors;
 	double avgload1;
@@ -39,7 +39,9 @@ struct HostListItem {
 	std::string cpuinfo;					// complete /dev/cpuinfo for tooltip or something
 	std::string meminfo;					// complete /dev/meminfo for tooltip or something
 
-  std::vector<ProcessListItem>  ProcessList;
+  std::vector<std::string>                HeaderProcessList;
+  std::unordered_map<std::string, size_t> HeadToIndex;
+  std::vector<ProcessListItem>            ProcessList;
 
 	HostListItem()
 	  : hostname("None"), cpuname("NoInfo"), memory("NoInfo"), uptime("NoInfo"),
@@ -54,3 +56,5 @@ struct HostListItem {
 };
 
 typedef std::unordered_map< std::string, HostListItem > HostList;
+
+#endif   /* ----- #ifndef NETMON_TYPES_INC  ----- */
