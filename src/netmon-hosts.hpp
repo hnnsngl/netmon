@@ -1,33 +1,46 @@
 #pragma once
 
-#include <map>
-#include <set>
+#include <unordered_map>
+#include <ostream>
+#include <unordered_map>
+
 #include <string>
+#include <vector>
+
+typedef std::vector< std::string > HostgroupList;
+typedef std::unordered_map< std::string, std::vector<std::string> > HostnameList;
 
 struct NetmonHosts
 {
-	typedef std::vector< std::string > HostgroupList;
-	typedef std::unordered_map< std::string, std::vector<std::string> > HostnameList;
+	/// a list of hostnames for each of the host groups
+	HostnameList  hostnames;
 
 	/// a list of all host groups
 	HostgroupList hostGroups;
-	/// a list of hostnames for each of the host groups
-	Hostnamelist  hostnames;
 
 	NetmonHosts( std::string filename )
-		: hostnames( createHostnameTree ),
-		  hostGroups( createHostGroupList(hostnames) )
+		: hostnames( createHostNameTree(filename) )
+		, hostGroups( createHostgroupList(hostnames) )
 	{}
 
 private:
-	/// derive the host group list from the host name list
+	/** derive the host group list from the host name list */
 	HostgroupList createHostgroupList( const HostnameList & hostnames ) const;
 
-	/// read list of hosts from a netmon-hosts file
+	/** read list of hosts from a netmon-hosts file with the following simple format
+	 *  - comments start with a hash # symbol and continue the rest of the line
+	 *  - a hostgroup is declared via brackets "[My favourite hosts]" followed by hosts
+	 *  - a default hostgroup is declared implicitly
+	 *  - declared hosts are added to the last hostgroup declared
+	 *  - hosts may be declared in multiple hostgroups
+	 *  - a host may be hostname ("eucken")  or a netgroup ("@workstation-all")
+	 *  - host and netgroup declarations must be separated by whitespace 	
+	 */
 	HostnameList  createHostNameTree( const std::string & filename ) const;
 
 	// print the hosts file
 	friend std::ostream& operator<<( std::ostream&, const NetmonHosts& );
 };
 
+/// print the unsorted list of hostgroups in the netmon-hosts file format
 std::ostream& operator<<( std::ostream&, const NetmonHosts& );
