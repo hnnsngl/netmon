@@ -25,6 +25,8 @@ struct ProcessListItem {
 };
 
 struct HostListItem {
+  bool alive;
+
 	std::string hostname;
 	std::string cpuname;					// "Core2", "Athlon", ...
 	std::string memory;						// "4020MB"
@@ -44,12 +46,12 @@ struct HostListItem {
   std::vector<ProcessListItem>            ProcessList;
 
 	HostListItem()
-	  : hostname("None"), cpuname("NoInfo"), memory("NoInfo"), uptime("NoInfo"),
+	  : alive(false), hostname("None"), cpuname("NoInfo"), memory("NoInfo"), uptime("NoInfo"),
 	    processors(1), avgload1(0), avgload2(0), avgload3(0), 
 	    cpuinfo("NoInfo"), meminfo("NoInfo")
   {}
 	HostListItem( const std::string& hostname_ )
-	  : hostname(hostname_), cpuname("NoInfo"), memory("NoInfo"), uptime("NoInfo"),
+	  : alive(false), hostname(hostname_), cpuname("NoInfo"), memory("NoInfo"), uptime("NoInfo"),
 	    processors(1), avgload1(0), avgload2(0), avgload3(0), 
 	    cpuinfo("NoInfo"), meminfo("NoInfo")
   {}
