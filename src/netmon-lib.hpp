@@ -10,8 +10,11 @@
 #include "netmon-types.hpp"
 #include "socket.h"
 
+/// refresh item "host", contact netmon-agent, build new item, lock mutexList, replace old item, unlock mutexList
 void          refresh_HostListItem( const std::string& host, const int port );
+/// create a new HostListItem,
 HostListItem  build_HostListItem( const std::string& host, const int port );
+/// refresh the complete hostList, using std::async to do this in different tasks for every item
 void          refresh_HostList_blocking( const int port );
 
 std::string   recv_full_message( const std::string& host, const int port );
