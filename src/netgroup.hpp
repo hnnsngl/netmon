@@ -32,8 +32,6 @@ std::vector<NetGroupTriple> getNetGroupTriples( std::string netgroup )
 
 		char *hostname, *username, *domainname;
 		while( getnetgrent( &hostname, &username, &domainname ) == 1 ){
-			std::cerr<< "getnetgrent" << std::endl;
-
 			triples.push_back(NetGroupTriple( hostname, username, domainname ));
 		}
 	}
