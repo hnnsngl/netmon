@@ -2,11 +2,10 @@
 #include <vector>
 
 #include <netdb.h>
+#include <netgroup.hpp>
 
-int main( int argc, char** argv )
+void getnetgroup_c( int argc, char** argv )
 {
-	// C
-
 	// search all supplied netgroups ..
 	std::cout << argv[1] << std::endl;
 
@@ -20,8 +19,19 @@ int main( int argc, char** argv )
 		std::cout << ", ";
 		if( username != 0 ) std::cout << username;
 		std::cout << ", ";
-		if( domainname != 0 ) std::cout << domainname != 0;
+		if( domainname != 0 ) std::cout << domainname;
 		std::cout << ")" << std::endl;
 	}
 	endnetgrent();
+}
+
+int main( int argc, char** argv )
+{
+	// std::cout << "Using direct syscalls" << std::endl;
+	// getnetgroup_c(argc, argv);
+
+	std::cout << "Using netgroup.hpp" << std::endl;
+	std::vector<NetGroupTriple> triples = getNetGroupTriples( std::string(argv[1]) );
+	for( const auto triple : triples )
+		std::cout << triple.hostname << std::endl;
 }

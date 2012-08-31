@@ -1,35 +1,46 @@
 #pragma once
 
-#include <tuple>
 #include <string>
 #include <vector>
 #include <exception>
 
 #include <netdb.h>
 
-typedef std::tuple< std::string, std::string, std::string > netGroupTriple;
-
-class netGroupException : public std::exception {
+struct NetGroupException : public std::exception {
 	virtual const char* what() const throw(){
-		return "Failed to initiate netGroup lookup." ;
+		return "Failed to initiate netGroup lookup" ;
 	}
 };
 
-std::vector<netGroupTriple>
-getNetGroup( std::string netgroup )
-{
-	const char* empty = "";
-	std::vector<netGroupTriple> entries;
-	char *hostname, *username, *domainname;
-	if( setnetgrent( netgroup.c_str() ) != 1 )
-		throw netGroupException();
+struct NetGroupTriple {
+	std::string hostname, username, domainname;
+	explicit NetGroupTriple( char* _host, char* _user, char* _domain )
+	{
+		if( _host != 0 ) hostname = _host;
+		if( _user != 0 ) username = _user;
+		if( _domain != 0 ) domainname = _domain;
+	}
+};
 
-	while( getnetgrent( &hostname, &username, &domainname ) == 1 )
-		entries.push_back( std::make_tuple( (hostname != 0) ? hostname : empty,
-		                                    (hostname != 0) ? hostname : empty,
-		                                    (hostname != 0) ? hostname : empty ) );
+std::vector<NetGroupTriple> getNetGroupTriples( std::string netgroup )
+{
+	std::vector<NetGroupTriple> triples;
+
+	try{
+		if( setnetgrent( netgroup.c_str() ) != 1 )
+			throw NetGroupException();
+
+		char *hostname, *username, *domainname;
+		while( getnetgrent( &hostname, &username, &domainname ) == 1 ){
+			std::cerr<< "getnetgrent" << std::endl;
+
+			triples.push_back(NetGroupTriple( hostname, username, domainname ));
+		}
+	}
+	catch (NetGroupException e) {
+		std::cerr << e.what() << " ( for " << netgroup << " )" << std::endl;
+	}
 
 	endnetgrent();
-
-	return entries;
+	return triples;
 }
