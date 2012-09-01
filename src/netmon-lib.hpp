@@ -127,7 +127,7 @@ HostListItem sort_fullMessage(const std::string& host, const std::string& messag
     }else{
       if( header[i] == '>' ){
         open = false;
-        tmpitem.HeaderProcessList.push_back(header.substr(pos1+1,i));
+        tmpitem.HeaderProcessList.push_back(header.substr(pos1+1,i-pos1-1));
       }
     }
   }
@@ -149,7 +149,7 @@ HostListItem sort_fullMessage(const std::string& host, const std::string& messag
     }else{
       if( processes[i] == '>' ){
         open = false;
-        tmpPItem.items[elemCount] = processes.substr(pos1+1,i);
+        tmpPItem.items[elemCount] = processes.substr(pos1+1,i-pos1-1);
         ++elemCount;
       }
     }
@@ -158,7 +158,6 @@ HostListItem sort_fullMessage(const std::string& host, const std::string& messag
       tmpitem.ProcessList.push_back(tmpPItem);
     }
   }
-
 
   return tmpitem;
 }
@@ -169,7 +168,7 @@ void print_HostList(){
     std::cout << "#####" << host.first << "#####\n"
       << "###### Processes ######\n";
     for( auto &head: host.second.HeaderProcessList ){
-      std::cout << head << "\t";
+      std::cout << ":" << head << ":\t";
     }
     std::cout << "\n";
     for( auto &pList: host.second.ProcessList ){
