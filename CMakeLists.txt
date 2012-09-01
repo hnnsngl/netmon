@@ -18,7 +18,7 @@ if(BOOST_LIBRARYDIR)
   set(BOOST_LIBRARYDIR ${BOOST_LIBRARYDIR})
   message("search for boost library dir in " ${BOOST_LIBRARYDIR})
 endif()
-find_package(Boost COMPONENTS program_options system filesystem REQUIRED)
+find_package(Boost COMPONENTS program_options system filesystem regex REQUIRED)
 
 # set compiler options
 
