@@ -51,8 +51,9 @@ int main( int argc, char** argv )
     }
     else {
       // retrieve default host list for netmon
-      for( const auto triple : getNetGroup( netGroup ) )
-        netmonHosts.push_back( std::get<0>(triple) );
+      //for( const auto triple : getNetGroup( netGroup ) )
+      //  netmonHosts.push_back( std::get<0>(triple) );
+      exit(1);
     }
   }
 

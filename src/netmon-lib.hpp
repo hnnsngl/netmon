@@ -7,14 +7,18 @@
 #include <thread>
 #include <future>
 #include <unordered_map>
+
 #include "netmon-types.hpp"
 #include "socket.h"
 
 /// refresh item "host", contact netmon-agent, build new item, lock mutexList, replace old item, unlock mutexList
+/** one can run this serial: refresh_HostListItem(host, port)
+ *  in a thread std::thread t1(refresh_HostListItem, host, port), t1.join() will synchronize 
+ *  in a task auto task = std::async(refresh_HostListItem, host, port)*. task.get() will synchronize */
 void          refresh_HostListItem( const std::string& host, const int port );
 /// create a new HostListItem,
 HostListItem  build_HostListItem( const std::string& host, const int port );
-/// refresh the complete hostList, using std::async to do this in different tasks for every item
+/// refresh the complete hostList, using std::async to do this in different tasks for every key in the hostList
 void          refresh_HostList_blocking( const int port );
 
 std::string   recv_full_message( const std::string& host, const int port );
@@ -55,7 +59,6 @@ void refresh_HostList_blocking(const int port){
 
   auto refresh_host = [&hostList](const std::string& host, const int port) -> HostListItem{
     std::string message( recv_full_message( host, port ) );
-    std::cout << "thread id: " << std::this_thread::get_id() << "\n";
     return sort_fullMessage( host, message );
   };
   std::unordered_map<std::string, std::future<HostListItem>> task_list;
@@ -109,6 +112,54 @@ HostListItem sort_fullMessage(const std::string& host, const std::string& messag
   };
   tmpitem.memory = getMemString("MemTotal:");
 
+  // parsing process list - this is not be done by regex due to the very regular output from netmon-agent
+  size_t pos1 = processes.find_first_of("\n");
+  std::string header = processes.substr(0,pos1);
+  processes.erase(0,pos1);
+  bool open = false;
+  pos1 = 0;
+  for( size_t i=0; i < header.size(); ++i ){
+    if( !open ){
+      if( header[i] == '<' ){
+        open = true;
+        pos1 = i;
+      }
+    }else{
+      if( header[i] == '>' ){
+        open = false;
+        tmpitem.HeaderProcessList.push_back(header.substr(pos1+1,i));
+      }
+    }
+  }
+  size_t numCol = tmpitem.HeaderProcessList.size();
+  for( size_t i=0; i < numCol; ++i ){
+    tmpitem.HeadToIndex[tmpitem.HeaderProcessList[i]] = i;
+  }
+  open = false;
+  pos1 = 0;
+  size_t elemCount = 0;
+  ProcessListItem tmpPItem;
+  tmpPItem.items.resize(numCol);
+  for( size_t i=0; i < processes.size(); ++i ){
+    if( !open ){
+      if( processes[i] == '<' ){
+        open = true;
+        pos1 = i;
+      }
+    }else{
+      if( processes[i] == '>' ){
+        open = false;
+        tmpPItem.items[elemCount] = processes.substr(pos1+1,i);
+        ++elemCount;
+      }
+    }
+    if( elemCount == numCol ){
+      elemCount = 0;
+      tmpitem.ProcessList.push_back(tmpPItem);
+    }
+  }
+
+
   return tmpitem;
 }
 
@@ -116,8 +167,17 @@ void print_HostList(){
   extern HostList hostList;
   for( auto &host: hostList ){
     std::cout << "#####" << host.first << "#####\n"
-      << host.second.meminfo << "######\n" 
-      << host.second.cpuinfo << "######\n" << host.second.memory << "\n";
+      << "###### Processes ######\n";
+    for( auto &head: host.second.HeaderProcessList ){
+      std::cout << head << "\t";
+    }
+    std::cout << "\n";
+    for( auto &pList: host.second.ProcessList ){
+      for( auto &item: pList.items ){
+        std::cout << item << "\t";
+      }
+      std::cout << "\n";
+    }
   }
 }
 
