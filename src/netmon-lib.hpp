@@ -205,13 +205,13 @@ HostListItem sort_fullMessage(const std::string& host, const std::string& messag
 void print_HostList(){
   extern HostList hostList;
   for( auto &host: hostList ){
+    std::cout << "##### " << host.second.hostname << " #####\n";
     std::cout << "CPU: " << host.second.processors << "x " << host.second.cpuname << "\n";
     std::cout << "RAM: " << host.second.memory << "\n";
     std::cout << "Uptime: " << host.second.uptime << "\n";
     std::cout << "Load: " << host.second.avgload1 << ", " << host.second.avgload2 << ", " << host.second.avgload3 << "\n";
     std::cout << "Agent version: " << host.second.agentversion << "\n";
-    std::cout << "#####" << host.first << "#####\n"
-      << "###### Processes ######\n";
+    std::cout << "###### Processes ######\n";
     for( auto &head: host.second.HeaderProcessList ){
       std::cout << ":" << head << ":\t";
     }
