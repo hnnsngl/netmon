@@ -6,8 +6,10 @@
 #include <utility>
 #include <thread>
 #include <future>
+#include <limits>
 #include <unordered_map>
 
+#include <boost/regex.hpp>
 #include "netmon-types.hpp"
 #include "socket.h"
 
@@ -103,6 +105,32 @@ HostListItem sort_fullMessage(const std::string& host, const std::string& messag
   tmpitem.meminfo = memory;
   tmpitem.cpuinfo = cpuinfo;
 
+  // parse system
+  // parse hostname
+  tmpitem.hostname = system.substr(0, system.find_first_of("\n"));
+  // parse agent-string
+  boost::regex sysreg(R"(netmon-agent\s(\d+.\d+))");
+  boost::smatch res;
+  if( boost::regex_search(system, res, sysreg) )  tmpitem.agentversion = res[1];
+  else                                            tmpitem.agentversion = "No Info";
+  // parse uptime
+  sysreg = (R"(up\s(\d+\s\w+))");
+  if( boost::regex_search(system, res, sysreg) )  tmpitem.uptime = res[1];
+  else                                            tmpitem.uptime = "No Info";
+  // parse laod
+  sysreg = R"(load average:\s(\d+.\d+),\s(\d+.\d+),\s(\d+.\d+))";
+  if( boost::regex_search(system, res, sysreg) ){
+    std::stringstream ss;
+    ss << res[1]; ss >> tmpitem.avgload1;
+    ss << res[2]; ss >> tmpitem.avgload1;
+    ss << res[3]; ss >> tmpitem.avgload1;
+  }else{
+    tmpitem.avgload1 = std::numeric_limits<double>::quiet_NaN();
+    tmpitem.avgload2 = std::numeric_limits<double>::quiet_NaN();
+    tmpitem.avgload3 = std::numeric_limits<double>::quiet_NaN();
+  }
+
+  // parse memory
   auto getMemString = [&memory](const std::string& qual) -> std::string{
     size_t pos1, pos2;
     pos1 = memory.find(qual);
@@ -111,6 +139,18 @@ HostListItem sort_fullMessage(const std::string& host, const std::string& messag
     return memory.substr(pos1, pos2-pos1);
   };
   tmpitem.memory = getMemString("MemTotal:");
+
+  // parse cpuinfo
+  // parse model name
+  boost::regex  reg(R"(model name\s*:\s([a-zA-Z0-9/(/) ]*))");
+  if( boost::regex_search(cpuinfo, res, reg) )  tmpitem.cpuname = res[1];
+  else                                          tmpitem.cpuname = "No Info";
+  // parse number of processors
+  std::stringstream ss;
+  reg = R"(processor\s*:\s(\d+))";
+  if( boost::regex_search(cpuinfo, res, reg) )  {ss << res[1]; ss >> tmpitem.processors;}
+  else                                          tmpitem.processors = std::numeric_limits<int>::quiet_NaN();
+  
 
   // parsing process list - this is not be done by regex due to the very regular output from netmon-agent
   size_t pos1 = processes.find_first_of("\n");
@@ -165,6 +205,11 @@ HostListItem sort_fullMessage(const std::string& host, const std::string& messag
 void print_HostList(){
   extern HostList hostList;
   for( auto &host: hostList ){
+    std::cout << "CPU: " << host.second.processors << "x " << host.second.cpuname << "\n";
+    std::cout << "RAM: " << host.second.memory << "\n";
+    std::cout << "Uptime: " << host.second.uptime << "\n";
+    std::cout << "Load: " << host.second.avgload1 << ", " << host.second.avgload2 << ", " << host.second.avgload3 << "\n";
+    std::cout << "Agent version: " << host.second.agentversion << "\n";
     std::cout << "#####" << host.first << "#####\n"
       << "###### Processes ######\n";
     for( auto &head: host.second.HeaderProcessList ){
