@@ -15,14 +15,14 @@
 
 /// refresh item "host", contact netmon-agent, build new item, lock mutexList, replace old item, unlock mutexList
 /** one can run this serial: refresh_HostListItem(host, port)
- *  in a thread std::thread t1(refresh_HostListItem, host, port), t1.join() will synchronize 
+ *  in a thread std::thread t1(refresh_HostListItem, host, port), t1.join() will synchronize , t1.detach will detach the thread
  *  in a task auto task = std::async(refresh_HostListItem, host, port)*. task.get() will synchronize */
 void          refresh_HostListItem( const std::string& host, const int port );
-/// create a new HostListItem,
-HostListItem  build_HostListItem( const std::string& host, const int port );
 /// refresh the complete hostList, using std::async to do this in different tasks for every key in the hostList
 void          refresh_HostList_blocking( const int port );
 
+/// create a new HostListItem,
+HostListItem  build_HostListItem( const std::string& host, const int port );
 std::string   recv_full_message( const std::string& host, const int port );
 HostListItem  sort_fullMessage( const std::string& host, const std::string& message );
 void          print_HostList();
@@ -205,13 +205,13 @@ HostListItem sort_fullMessage(const std::string& host, const std::string& messag
 void print_HostList(){
   extern HostList hostList;
   for( auto &host: hostList ){
+    std::cout << "##### " << host.second.hostname << " #####\n";
     std::cout << "CPU: " << host.second.processors << "x " << host.second.cpuname << "\n";
     std::cout << "RAM: " << host.second.memory << "\n";
     std::cout << "Uptime: " << host.second.uptime << "\n";
     std::cout << "Load: " << host.second.avgload1 << ", " << host.second.avgload2 << ", " << host.second.avgload3 << "\n";
     std::cout << "Agent version: " << host.second.agentversion << "\n";
-    std::cout << "#####" << host.first << "#####\n"
-      << "###### Processes ######\n";
+    std::cout << "###### Processes ######\n";
     for( auto &head: host.second.HeaderProcessList ){
       std::cout << ":" << head << ":\t";
     }
