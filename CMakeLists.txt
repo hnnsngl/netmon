@@ -22,7 +22,7 @@ find_package(Boost COMPONENTS program_options system filesystem regex REQUIRED)
 
 # set compiler options
 
-set(CMAKE_CXX_COMPILER mpic++)
+set(CMAKE_CXX_COMPILER g++)
 add_definitions(-pedantic -Wall -O2 -g -funroll-loops -std=c++0x -static )
 
 link_directories    ( ${Boost_LIBRARY_DIRS} )
