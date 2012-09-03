@@ -28,7 +28,7 @@ HostgroupList NetmonHosts::createHostgroupList( const HostnameList & hostnames )
 	return groups;
 }
 
-void print_hostgroup(std::vector<std::string> & list)
+void print_hostitems(std::vector<std::string> & list)
 {
 	std::cout << std::endl;
 	for( auto item : list )
@@ -36,81 +36,54 @@ void print_hostgroup(std::vector<std::string> & list)
 	std::cout << std::endl;
 }
 
+void print_defgroup(std::string & group)
+{
+	std::cout << " [[[ " << group << " ]]]" << std::endl;
+}
+
+void print_groupitem(std::pair< std::string, std::vector<std::string> > & list)
+{
+	std::cout << std::endl;
+	std::cout << " [[[ " << list.first << " ]]] " << std::endl;
+	for( auto item : list.second )
+		std::cout << " <<< " << item << " >>> " << std::endl;
+	std::cout << std::endl;
+}
+
 HostnameList NetmonHosts::createHostNameTree( const std::string & filename ) const
 {
 	std::cerr << "parsing hosts file: " << filename << std::endl;
 
-  std::ifstream in(filename.c_str(), std::ios_base::in);
+	std::ifstream in( filename );
+	in.unsetf(std::ios::skipws);
 
-  if (!in)
-    {
-      std::cerr << "Error: Could not open input file: "
-                << filename << std::endl;
-    }
-
-  std::string data;							// We will read the contents here.
-  in.unsetf(std::ios::skipws);	// No white space skipping!
-  std::copy(
-	    std::istream_iterator<char>(in),
-	    std::istream_iterator<char>(),
-	    std::back_inserter(data));
-
-  std::cout << "--- host file ---" << std::endl
-            << data
-            << "--- end host file ---" << std:: endl;
-
-  typedef std::string::iterator iterator;
-  iterator begin = data.begin();
-  iterator end   = data.end();
-	
-	// reading file with stream iterators
-	// 
-	// std::ifstream in( filename );
-	// in.unsetf(std::ios::skipws);
-
-	// // wrap istream into iterator
-	// typedef boost::spirit::istream_iterator iterator;
-	// iterator begin(in);
-	// iterator end;
+	// wrap istream into iterator
+	typedef boost::spirit::istream_iterator iterator;
+	iterator begin(in), end;
 
 	using namespace boost::spirit;
-	using namespace qi::ascii;
-	namespace phx = boost::phoenix;
-	// using qi::_1;
+	using namespace boost::spirit::qi::ascii;
 
-	using phx::ref;
-	using phx::push_back;
+	// qi::rule<iterator, space_type, std::string()> defgroup;
+	// defgroup %= lexeme['[' >> *(alpha - ']') >> ']'];
 
-	HostnameList map;
-	auto insert = [&map](std::pair< std::string, std::vector<std::string> >& group)
-		{
-			map[group.first] = group.second;
-		};
+	qi::rule<iterator, std::vector<std::string>()> hostlist;
+	hostlist %= lexeme[ (-char_('@')) >> alpha >> *(alnum | punct) ] % +space;
 
-	qi::rule<iterator, std::string()> defgroup = lexeme['[' >> *omit[space] >> +( char_ - ']' ) >> ']'];
-	qi::rule<iterator, std::string()> hostname = -omit[space] >> alpha >> *qi::alnum >> omit[space];
-	qi::rule<iterator, std::string()> netgroup = lexeme[char_('@') >> alpha >> *( char_ - space)];
-	// std::pair< std::string, std::vector<std::string> >()
-	qi::rule<iterator, std::vector<std::string>()> hostgroup;
-	hostgroup = +( hostname | netgroup );
+	// qi::rule<iterator, std::vector<std::string>()> hostgroup;
+	// hostgroup %= defgroup >> lexeme[ (-char_('@')) >> alpha >> *(alnum | punct) ] % +space;
 
-	BOOST_SPIRIT_DEBUG_NODE(hostname);
-	BOOST_SPIRIT_DEBUG_NODE(hostgroup);
+	BOOST_SPIRIT_DEBUG_NODE(hostlist);
+	BOOST_SPIRIT_DEBUG_NODE(defgroup);
 
-	bool r = qi::phrase_parse( begin, end,
-	                           hostgroup[&print_hostgroup],
-	                           qi::space 	                           // ( char_('#') >>*( char_ - eol ) >> eol ) | space
-	                           );
+	std::vector<std::string> map;
+	bool r = qi::phrase_parse( begin, end, hostlist, space, map);
+	print_hostitems(map);
 
-	// if( begin != end )
-	// 	std::cerr << "Failed to parse hosts file: " << filename << std::endl;
+	if( (begin != end) || !r )
+		std::cerr << "Failed to parse hosts file: " << filename << std::endl;
 
-	// if( !r )
-	// 	std::cerr << "Failed to parse hosts file: " << filename << " (bad return value)" << std::endl;
-
-  std::cout << "marker" << std::endl;
-
-	return hostnames;
+	return HostnameList();
 }
 
 std::ostream& operator<< ( std::ostream & os, const NetmonHosts & netmonHosts )
