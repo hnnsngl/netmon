@@ -1,4 +1,5 @@
 #include "netmon-hosts.hpp"
+#include "netgroup.hpp"
 
 #include <fstream>
 #include <string>
@@ -52,36 +53,50 @@ void print_groupitem(std::pair< std::string, std::vector<std::string> > & list)
 
 HostnameList NetmonHosts::createHostNameTree( const std::string & filename ) const
 {
-	std::cerr << "parsing hosts file: " << filename << std::endl;
+	using namespace boost::spirit;
+	using namespace boost::spirit::qi::ascii;
 
 	std::ifstream in( filename );
 	in.unsetf(std::ios::skipws);
 
-	// wrap istream into iterator
+	// wrap istream into an input iterator
 	typedef boost::spirit::istream_iterator iterator;
 	iterator begin(in), end;
 
-	using namespace boost::spirit;
-	using namespace boost::spirit::qi::ascii;
-
-	// qi::rule<iterator, space_type, std::string()> defgroup;
-	// defgroup %= lexeme['[' >> *(alpha - ']') >> ']'];
+	qi::rule<iterator, std::string()> listitem, comment, hostitem, netgroup, hostgroup;
+	listitem  %= comment | hostitem | netgroup | hostgroup ;
+	comment %= ( *space >> char_('#') >> *( char_ - eol ) );
+	hostitem  %= lexeme[ alpha >> *(alnum | punct) ];
+	netgroup  %= lexeme[ (-char_('@')) >> alpha >> *(alnum | punct) ];
+	hostgroup %= lexeme[ char_('[') >> +( char_ - ']' ) >> char_(']') ];
 
 	qi::rule<iterator, std::vector<std::string>()> hostlist;
-	hostlist %= lexeme[ (-char_('@')) >> alpha >> *(alnum | punct) ] % +space;
+	hostlist  %= listitem % +space;
 
-	// qi::rule<iterator, std::vector<std::string>()> hostgroup;
-	// hostgroup %= defgroup >> lexeme[ (-char_('@')) >> alpha >> *(alnum | punct) ] % +space;
-
-	BOOST_SPIRIT_DEBUG_NODE(hostlist);
-	BOOST_SPIRIT_DEBUG_NODE(defgroup);
-
-	std::vector<std::string> map;
-	bool r = qi::phrase_parse( begin, end, hostlist, space, map);
-	print_hostitems(map);
+	std::vector<std::string> items;
+	bool r = qi::phrase_parse( begin, end, hostlist, space, items );
+	print_hostitems(items);
 
 	if( (begin != end) || !r )
 		std::cerr << "Failed to parse hosts file: " << filename << std::endl;
+
+	// add items to our host map
+	HostnameList list;
+	std::string groupname = "Default Group";
+	for( const auto item : items ){
+		switch(item[0]){
+		case '[':
+		groupname = item;
+		break;
+		case '@':
+		for(const auto triple : getNetGroupTriples( item.substr(1) ) )
+			list[groupname].push_back(triple.hostname);
+		break;
+		case '#': continue;
+		default:
+		list[groupname].push_back(item);
+		}
+	}
 
 	return HostnameList();
 }
