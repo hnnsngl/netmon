@@ -24,9 +24,6 @@ struct NetmonHosts
 	{}
 
 private:
-	/** derive the host group list from the host name list */
-	HostgroupList createHostgroupList( const HostnameList & hostnames ) const;
-
 	/** read list of hosts from a netmon-hosts file with the following simple format
 	 *  - comments start with a hash # symbol and continue the rest of the line
 	 *  - a hostgroup is declared via brackets "[My favourite hosts]" followed by hosts
@@ -37,6 +34,9 @@ private:
 	 *  - host and netgroup declarations must be separated by whitespace 	
 	 */
 	HostnameList  createHostNameTree( const std::string & filename ) const;
+
+	/** derive the host group list from the host name list */
+	HostgroupList createHostgroupList( const HostnameList & hostnames ) const;
 
 	// print the hosts file
 	friend std::ostream& operator<<( std::ostream&, const NetmonHosts& );
