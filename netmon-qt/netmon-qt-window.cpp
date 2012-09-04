@@ -16,13 +16,9 @@
 #include <QPushButton>
 #include <QToolBar>
 
-#include <iostream>
-
 NetmonWindow::NetmonWindow()
 	: netmonHosts("~/.netmon-hosts")
 {
-	std::cout << "Host list:" << std::endl << netmonHosts << std::endl;
-
 	createModels();
 
 	// main parts -- use a toolbox for now, but this is easily changed
@@ -59,27 +55,33 @@ NetmonWindow::NetmonWindow()
   main_exit->setStatusTip(tr("Exit"));
   connect(main_exit, SIGNAL(triggered()), qApp, SLOT(quit()));
 
-  hosts_expand = new QAction(tr("Expand"), this);
+  hosts_expand = new QAction(tr("Expand Host Groups"), this);
   hosts_expand->setIcon(QIcon(":/images/placeholder.png"));
   hosts_expand->setShortcut(tr("Ctrl++"));
-  hosts_expand->setStatusTip(tr("Expand Host Groups"));
   connect(hosts_expand, SIGNAL(triggered()), view_hostlist, SLOT(expandAll()));
 
-  hosts_collapse = new QAction(tr("Collapse"), this);
+  hosts_collapse = new QAction(tr("Collapse Host Groups"), this);
   hosts_collapse->setIcon(QIcon(":/images/placeholder.png"));
   hosts_collapse->setShortcut(tr("Ctrl+-"));
-  hosts_collapse->setStatusTip(tr("Collapse Host Groups"));
   connect(hosts_collapse, SIGNAL(triggered()), view_hostlist, SLOT(collapseAll()));
+
+  filter_user = new QAction(tr("Own Processes"), this);
+  filter_user->setIcon(QIcon(":/images/placeholder.png"));
+  filter_user->setShortcut(tr("Ctrl+U"));
+  connect(filter_user, SIGNAL(triggered()), this, SLOT(filterUpdate()));
 
 	/** toolbar */
   mainToolBar = addToolBar(tr("&Netmon"));
   mainToolBar->addAction(main_exit);
   mainToolBar->addAction(hosts_expand);
   mainToolBar->addAction(hosts_collapse);
-
+  mainToolBar->addAction(filter_user);
   // filterToolbar = addToolBar(tr("&Filter"));
   // filterToolbar->addAction(filter_own_processes);
 }
+
+void NetmonWindow::filterUpdate()
+{}
 
 NetmonWindow::~NetmonWindow()
 {}

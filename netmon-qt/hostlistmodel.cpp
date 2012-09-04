@@ -19,7 +19,7 @@ NetmonHostlistModel::~NetmonHostlistModel()
 QModelIndex NetmonHostlistModel::index( int row, int col, const QModelIndex &parent ) const
 {
 	if( ! parent.isValid() ){
-		qDebug("NetmonHostlistModel::index (group level) row=%d col=%d", row, col);
+		// qDebug("NetmonHostlistModel::index (group level) row=%d col=%d", row, col);
 		return createIndex( row, col, -1 );
 	}
 
@@ -34,7 +34,7 @@ QModelIndex NetmonHostlistModel::index( int row, int col, const QModelIndex &par
 
 QModelIndex NetmonHostlistModel::parent( const QModelIndex &child ) const
 {
-	qDebug("NetmonHostlistModel::parent");
+	// qDebug("NetmonHostlistModel::parent");
 	if( !child.isValid() )
 		return QModelIndex();
 
@@ -126,9 +126,6 @@ QVariant NetmonHostlistModel::data( const QModelIndex &index, int role ) const
 
 QVariant NetmonHostlistModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	// qDebug("NetmonHostlistModel::headerData section=%d, orientation=%d, role=%d",
-	//        section, orientation, role);
-
 	switch( role ){
 	case Qt::DisplayRole:
 		if( orientation == Qt::Horizontal ){
