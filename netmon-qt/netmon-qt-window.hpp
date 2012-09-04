@@ -1,4 +1,5 @@
 #include "netmon-types.hpp"
+#include "netmon-hosts.hpp"
 
 #include <QMainWindow>
 #include <QObject>
@@ -29,12 +30,15 @@ public:
 private:
 	QToolBox *toolbox;
 
+	NetmonHosts netmonHosts;
+
 	NetmonHostlistModel *model_hostlist;
 	NetmonProcessListModel *model_processes;
 
 	QToolBar *mainToolBar, *filterToolbar;
 
 	QAction *main_exit;
+	QAction *hosts_expand, *hosts_collapse;
 	QAction *filter_own_processes;
 
 	void createModels();
