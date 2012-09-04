@@ -27,6 +27,9 @@ public:
 	// NetmonWindow( int argc, char** argv );
 	virtual ~NetmonWindow();
 
+public slots:
+	void filterUpdate();
+
 private:
 	QToolBox *toolbox;
 
@@ -39,7 +42,7 @@ private:
 
 	QAction *main_exit;
 	QAction *hosts_expand, *hosts_collapse;
-	QAction *filter_own_processes;
+	QAction *filter_user;
 
 	void createModels();
 	void createToolbar();
