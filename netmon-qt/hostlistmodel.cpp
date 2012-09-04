@@ -5,6 +5,7 @@
 #include <QtGui>
 #include <QString>
 #include <QDebug>
+#include <QPixmap>
 
 NetmonHostlistModel::NetmonHostlistModel( NetmonHosts & _netmonHosts, QObject *parent )
 	: QAbstractItemModel(parent),
@@ -97,17 +98,23 @@ QVariant NetmonHostlistModel::data( const QModelIndex &index, int role ) const
 			default:
 				return QString("item: Row%1, Column%2") .arg(index.row() + 1) .arg(index.column() + 1);
 			}
+		case Qt::ToolTipRole:
+			switch(index.column()){
+			case 1: return QString(hostitem.cpuinfo.c_str());
+			case 2: return QString(hostitem.meminfo.c_str());
+			}
+		case Qt::DecorationRole:
+			switch(index.column()){
+			case 0: return QVariant(QPixmap(":/images/placeholder.png").scaledToHeight(16));
+			}
+		case Qt::SizeHintRole:
+			switch(index.column()){
+			case 0: return QVariant(512);
+			}
 		default:
 			return QVariant();
 		}
 	}
-
-	// case Qt::ToolTipRole:
-	// 	// The data displayed in the item's tooltip. (QString)
-	// 	//
-	// 	// use for cpuinfo and meminfo
-	// 	break;
-
 	// case Qt::DecorationRole:
 	// 	// The data to be rendered as a decoration in the form of an icon. (QColor, QIcon or QPixmap)
 	// 	//
@@ -143,10 +150,9 @@ QVariant NetmonHostlistModel::headerData(int section, Qt::Orientation orientatio
 			}
 		}
 		return QString("%1") .arg(section);	
-	// case Qt::SizeHintRole:
-	// 	qDebug("return size hint");
-	// 	return QVariant(60);
+	case Qt::SizeHintRole:
+		switch(section)
+		case 0: return QSize(600,16);
 	}
-
 	return QVariant();
 }
