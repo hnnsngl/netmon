@@ -6,47 +6,52 @@
 #include <QAction>
 #include <QWidget>
 #include <QFrame>
+#include <QGroupBox>
 #include <QBoxLayout>
-#include <QToolBox>
+#include <QToolBar>
 #include <QTableView>
 #include <QTreeView>
 #include <QMainWindow>
 #include <QApplication>
 #include <QKeyEvent>
-#include <QPushButton>
-#include <QToolBar>
+#include <QSplitter>
+#include <QDir>
+
+#include <iostream>
+#include <string>
 
 NetmonWindow::NetmonWindow()
-	: netmonHosts("~/.netmon-hosts")
+	: netmonHosts(QDir::homePath().toStdString() + std::string("/.netmon-hosts"))
 {
 	createModels();
 
-	// main parts -- use a toolbox for now, but this is easily changed
-	toolbox = new QToolBox(this);
-	setCentralWidget(toolbox);
+
+	// main parts
+	QSplitter *splitter = new QSplitter(Qt::Vertical, this);
+	setCentralWidget(splitter);
 
 	/* host list frame */
-	QFrame *frame_hostlist = new QFrame(toolbox);
-	toolbox->addItem( frame_hostlist, tr("Hosts") );
+	QFrame *frame_hostlist = new QFrame(this);
+	splitter->addWidget( frame_hostlist );
 	QVBoxLayout *layout_hostlist = new QVBoxLayout(frame_hostlist);
-	QTreeView *view_hostlist = new QTreeView(frame_hostlist);
+	view_hostlist = new QTreeView(frame_hostlist);
 	view_hostlist->setModel( model_hostlist );
 	layout_hostlist->addWidget(view_hostlist);
 
 	/* processes frame */
-	QFrame *frame_processes = new QFrame(toolbox);
-	toolbox->addItem( frame_processes, tr("Processes") );
+	QFrame *frame_processes = new QFrame(this);
+	splitter->addWidget( frame_processes );
 	QVBoxLayout *layout_processes = new QVBoxLayout(frame_processes);
-	QTableView *view_processes = new QTableView(frame_processes);
-	// view_processes->setModel( model_processes );
+	view_processes = new QTableView(frame_processes);
+	view_processes->setModel( model_processes );
 	layout_processes->addWidget(view_processes);
 
-	/** settings frame */
-	QFrame *frame_settings = new QFrame(toolbox);
-	toolbox->addItem( frame_settings, tr("Settings") );
-	QVBoxLayout *layout_settings = new QVBoxLayout(frame_settings);
-	QPushButton* button = new QPushButton( "This Button does &Nothing", frame_settings );
-	layout_settings->addWidget(button);
+	// /** settings frame */
+	// QFrame *frame_settings = new QFrame(this);
+	// toolbox->addWidgetaddItem( frame_settings, tr("Settings") );
+	// QVBoxLayout *layout_settings = new QVBoxLayout(frame_settings);
+	// QPushButton* button = new QPushButton( "This Button does &Nothing", frame_settings );
+	// layout_settings->addWidget(button);
 
 	/** actions */
 	main_exit = new QAction(tr("&Exit"), this);
