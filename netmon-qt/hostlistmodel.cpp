@@ -138,15 +138,15 @@ QVariant NetmonHostlistModel::headerData(int section, Qt::Orientation orientatio
 		if( orientation == Qt::Horizontal ){
 			switch( section ){
 			case 0:
-				return QString("Host");
+				return QString(tr("Host"));
 			case 1:
-				return QString("CPU");
+				return QString(tr("CPU"));
 			case 2:
-				return QString("Memory");
+				return QString(tr("Memory"));
 			case 3:
-				return QString("Load");
+				return QString(tr("Load"));
 			case 4:
-				return QString("Uptime");
+				return QString(tr("Uptime"));
 			}
 		}
 		return QString("%1") .arg(section);	

@@ -2,6 +2,9 @@
 
 #include "netmon-qt-window.hpp"
 
+HostList   hostList;
+std::mutex mutexList;
+
 int main( int argc, char** argv )
 {
 	QApplication application( argc, argv );
