@@ -1,6 +1,8 @@
 #include "netmon-qt-window.hpp"
 #include "hostlistmodel.hpp"
 #include "processlistmodel.hpp"
+#include "netmon-lib.hpp"
+#include "netmon-hosts.hpp"
 
 #include <QObject>
 #include <QAction>
@@ -20,11 +22,24 @@
 #include <iostream>
 #include <string>
 
+extern HostList hostList;
+
+void createHostList(const NetmonHosts& netmonHosts)
+{
+	for( const auto& group : netmonHosts.hostnames )
+		for( const auto& host : group.second ){
+			std::cerr << "# add to hostList: " << host << std::endl;
+			hostList[host] = HostListItem(host);
+		}
+}
+
 NetmonWindow::NetmonWindow()
 	: netmonHosts(QDir::homePath().toStdString() + std::string("/.netmon-hosts"))
 {
+	createHostList(netmonHosts);
+	refresh_HostList_blocking(9221);
+	print_HostList();
 	createModels();
-
 
 	// main parts
 	QSplitter *splitter = new QSplitter(Qt::Vertical, this);
