@@ -9,4 +9,7 @@ add_executable (netgroup-example          netgroup-example.cpp)
 
 add_executable (socket-example            socket-example.cpp)
 target_link_libraries(socket-example      ${CORELIBS})
+
 add_executable (netmon-hosts-test         netmon-hosts-test.cpp ../src/netmon-hosts.cpp)
+target_link_libraries(netmon-hosts-test   ${CORELIBS})
+
