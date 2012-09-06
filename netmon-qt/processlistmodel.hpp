@@ -1,5 +1,10 @@
 #pragma once
 
+#include "netmon-types.hpp"
+
+#include <vector>
+#include <string>
+
 #include <QObject>
 #include <QVariant>
 #include <QModelIndex>
@@ -13,6 +18,8 @@ class NetmonProcessListModel : public QAbstractItemModel
 	NetmonProcessListModel( QObject *parent );
 	~NetmonProcessListModel();
 
+	std::vector<std::string> headNames;
+
 	// AbstractItemModel Interface (required methods)	
 	QModelIndex index( int row, int col, const QModelIndex& parent = QModelIndex() ) const;
 	QModelIndex parent( const QModelIndex& child ) const;
@@ -22,5 +29,5 @@ class NetmonProcessListModel : public QAbstractItemModel
 	QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
 private:
-
+	std::vector<std::string> hostIndex;
 };
