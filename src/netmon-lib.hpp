@@ -1,6 +1,9 @@
 #ifndef  NETMON_LIB_INC
 #define  NETMON_LIB_INC
 
+#include "netmon-types.hpp"
+#include "socket.h"
+
 #include <string>
 #include <vector>
 #include <utility>
@@ -8,10 +11,9 @@
 #include <future>
 #include <limits>
 #include <unordered_map>
+#include <sstream>
 
 #include <boost/regex.hpp>
-#include "netmon-types.hpp"
-#include "socket.h"
 
 /// refresh item "host", contact netmon-agent, build new item, lock mutexList, replace old item, unlock mutexList
 /** one can run this serial: refresh_HostListItem(host, port)
