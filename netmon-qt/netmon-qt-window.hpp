@@ -12,6 +12,7 @@ class QHBoxLayout;
 class QTabWidget;
 class QToolBox;
 class QTreeView;
+class QTableView;
 class QToolBar;
 
 class NetmonHostlistModel;
@@ -31,12 +32,13 @@ public slots:
 	void filterUpdate();
 
 private:
-	QToolBox *toolbox;
-
 	NetmonHosts netmonHosts;
 
 	NetmonHostlistModel *model_hostlist;
+	QTreeView *view_hostlist;
+
 	NetmonProcessListModel *model_processes;
+	QTableView * view_processes;
 
 	QToolBar *mainToolBar, *filterToolbar;
 
