@@ -41,6 +41,7 @@ private:
 	QTreeView *view_hostlist;
 
 	NetmonProcessListModel *model_processes;
+	NetmonProcessListProxy *proxy_processes;
 	QTreeView * view_processes;
 
 	QToolBar *mainToolBar, *filterToolbar;

@@ -1,7 +1,10 @@
 #include "netmon-qt-window.hpp"
+
 #include "hostlistmodel.hpp"
 #include "hostlistproxy.hpp"
 #include "processlistmodel.hpp"
+#include "processlistproxy.hpp"
+
 #include "netmon-lib.hpp"
 #include "netmon-hosts.hpp"
 
@@ -62,7 +65,7 @@ NetmonWindow::NetmonWindow()
 	splitter->addWidget( frame_processes );
 	QVBoxLayout *layout_processes = new QVBoxLayout(frame_processes);
 	view_processes = new QTreeView(frame_processes);
-	view_processes->setModel( model_processes );
+	view_processes->setModel( proxy_processes );
 	layout_processes->addWidget(view_processes);
 
 	// /** settings frame */
@@ -118,10 +121,13 @@ NetmonWindow::~NetmonWindow()
 void NetmonWindow::createModels()
 {
 	model_hostlist = new NetmonHostlistModel(netmonHosts, this);
-	model_processes = new NetmonProcessListModel(this);
-
 	proxy_hostlist = new NetmonHostlistProxy(netmonHosts, this);
 	proxy_hostlist->setSourceModel(model_hostlist);
+
+	model_processes = new NetmonProcessListModel(this);
+	proxy_processes = new NetmonProcessListProxy(this);
+	proxy_processes->setSourceModel(model_processes);
+
 }
 
 void NetmonWindow::createToolbar()

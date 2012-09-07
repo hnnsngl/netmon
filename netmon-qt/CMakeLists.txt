@@ -3,11 +3,11 @@ FIND_PACKAGE(Qt4 REQUIRED)
 SET(netmon-qt_SOURCES netmon-qt.cpp ../src/netmon-hosts.cpp
                       netmon-qt-window.cpp
 		      hostlistmodel.cpp hostlistproxy.cpp
-		      processlistmodel.cpp)
+		      processlistmodel.cpp processlistproxy.cpp)
 
 SET(netmon-qt_HEADERS netmon-qt-window.cpp
                       hostlistmodel.hpp hostlistproxy.hpp
-		      processlistmodel.hpp)
+		      processlistmodel.hpp processlistproxy.hpp)
 
 SET(netmon-qt_RESOURCES images.qrc)
 
