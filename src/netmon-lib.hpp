@@ -27,7 +27,7 @@ void          refresh_HostList_blocking( const int port );
 HostListItem  build_HostListItem( const std::string& host, const int port );
 std::string   recv_full_message( const std::string& host, const int port );
 HostListItem  sort_fullMessage( const std::string& host, const std::string& message );
-void          print_HostList();
+void          print_HostList( bool printProcesses = false );
 
 void          refresh_HostListItem( const std::string& host, const int port ){
   extern HostList hostList;
@@ -206,7 +206,7 @@ HostListItem sort_fullMessage(const std::string& host, const std::string& messag
   return tmpitem;
 }
 
-void print_HostList(){
+void print_HostList( bool printProcesses ){
   extern HostList hostList;
   for( auto &host: hostList ){
     std::cout << "##### " << host.second.hostname << " #####\n";
@@ -216,15 +216,17 @@ void print_HostList(){
     std::cout << "Load: " << host.second.avgload1 << ", " << host.second.avgload2 << ", " << host.second.avgload3 << "\n";
     std::cout << "Agent version: " << host.second.agentversion << "\n";
     std::cout << "###### Processes ######\n";
-    for( auto &head: host.second.HeaderProcessList ){
-      std::cout << ":" << head << ":\t";
-    }
-    std::cout << "\n";
-    for( auto &pList: host.second.ProcessList ){
-      for( auto &item: pList.items ){
-        std::cout << item << "\t";
-      }
-      std::cout << "\n";
+    if( printProcesses ){
+	    for( auto &head: host.second.HeaderProcessList ){
+		    std::cout << ":" << head << ":\t";
+	    }
+	    std::cout << "\n";
+	    for( auto &pList: host.second.ProcessList ){
+		    for( auto &item: pList.items ){
+			    std::cout << item << "\t";
+		    }
+		    std::cout << "\n";
+	    }
     }
   }
 }
