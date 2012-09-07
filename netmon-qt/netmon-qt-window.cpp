@@ -91,8 +91,12 @@ NetmonWindow::NetmonWindow()
 
   filter_user = new QAction(tr("Own Processes"), this);
   filter_user->setIcon(QIcon(":/images/placeholder.png"));
-  filter_user->setShortcut(tr("Ctrl+U"));
   connect(filter_user, SIGNAL(triggered()), this, SLOT(filterUpdate()));
+
+  filter_hosts_dead = new QAction(tr("Filter Dead Hosts"), this);
+  filter_hosts_dead->setIcon(QIcon(":/images/host-offline.png"));
+  filter_hosts_dead->setCheckable(true);
+  connect(filter_hosts_dead, SIGNAL(toggled(bool)), proxy_hostlist, SLOT(toggleFilter(bool)));
 
 	/** toolbar */
   mainToolBar = addToolBar(tr("&Netmon"));
@@ -100,6 +104,7 @@ NetmonWindow::NetmonWindow()
   mainToolBar->addAction(hosts_expand);
   mainToolBar->addAction(hosts_collapse);
   mainToolBar->addAction(filter_user);
+  mainToolBar->addAction(filter_hosts_dead);
   // filterToolbar = addToolBar(tr("&Filter"));
   // filterToolbar->addAction(filter_own_processes);
 }

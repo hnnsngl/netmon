@@ -47,7 +47,7 @@ private:
 
 	QAction *main_exit;
 	QAction *hosts_expand, *hosts_collapse;
-	QAction *filter_user;
+	QAction *filter_user, *filter_hosts_dead;
 
 	void createModels();
 	void createToolbar();

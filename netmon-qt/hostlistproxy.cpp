@@ -11,8 +11,14 @@
 extern HostList hostList;
 
 NetmonHostlistProxy::NetmonHostlistProxy(NetmonHosts &hosts, QObject *parent)
-	: QSortFilterProxyModel(parent), netmonHosts(hosts), filterDisabled(true)
+	: QSortFilterProxyModel(parent), netmonHosts(hosts), filterEnabled(false)
 {}
+
+void NetmonHostlistProxy::toggleFilter( bool enable )
+{
+	filterEnabled = enable;
+	invalidateFilter();
+}
 
 bool NetmonHostlistProxy::lessThan( const QModelIndex &left,
                                     const QModelIndex &right ) const
@@ -40,12 +46,14 @@ bool NetmonHostlistProxy::lessThan( const QModelIndex &left,
 bool NetmonHostlistProxy::filterAcceptsRow( int sourceRow,
                                             const QModelIndex &sourceParent ) const
 {
-	if( filterDisabled ) return true;
-
-	if( sourceParent.isValid() ){
-		std::string group = sourceParent.data().toString().toStdString();
-		std::string host  = netmonHosts.hostnames[group][sourceRow];
-		return hostList[host].alive;
+	if( filterEnabled ) {
+		if( sourceParent.isValid() ){
+			std::string group = sourceParent.data().toString().toStdString();
+			std::string host  = netmonHosts.hostnames[group][sourceRow];
+			return hostList[host].alive;
+		}
+		else true;
 	}
-	else true;
+
+	return true;
 }

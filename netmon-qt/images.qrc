@@ -2,5 +2,6 @@
 <qresource>
   <file>images/application-exit.png</file>
   <file>images/placeholder.png</file>
+  <file>images/host-offline.png</file>
 </qresource>
 </RCC>
