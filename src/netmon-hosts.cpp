@@ -27,7 +27,6 @@ std::vector<std::string> parseHostlistFile( std::string filename )
 	// boost::regex pattern (R"([:alpha:][^ \t\n]*|@[:alpha:][^ \t\n#]*|\[[]^]\]|#.*$|)");
 	boost::regex pattern
 		(R"(^[[:s:]]*([\@]?[[:alpha:]][\w\.\-]+|\[.+\])[[:s:]]*)", boost::regex::perl);
-
 	std::ifstream in(filename);
 	std::string input;
 	while( std::getline( in, input ) ){
@@ -39,36 +38,6 @@ std::vector<std::string> parseHostlistFile( std::string filename )
 	}
 	return list;
 }
-
-// std::vector<std::string> parseHostlistFile( std::string filename ){
-// 	using namespace boost::spirit;
-// 	using namespace boost::spirit::qi::ascii;
-
-// 	std::ifstream in( filename );
-// 	in.unsetf(std::ios::skipws);
-
-// 	// wrap istream into an input iterator
-// 	typedef boost::spirit::istream_iterator iterator;
-// 	iterator begin(in), end;
-
-// 	qi::rule<iterator, std::string()> listitem, comment, hostitem, netgroup, hostgroup;
-// 	listitem  %= comment | hostitem | netgroup | hostgroup ;
-// 	comment   %= ( *space >> char_('#') >> *( char_ - eol ) );
-// 	hostitem  %= lexeme[ alpha >> *(alnum | punct) ];
-// 	netgroup  %= lexeme[ (-char_('@')) >> alpha >> *(alnum | punct) ];
-// 	hostgroup %= lexeme[ char_('[') >> +( char_ - ']' ) >> char_(']') ];
-
-// 	std::vector<std::string> items;
-// 	qi::rule<iterator, std::vector<std::string>()> hostlist;
-// 	hostlist  %= listitem % +space;
-
-// 	bool r = qi::phrase_parse( begin, end, hostlist, space, items );
-
-// 	if( (begin != end) || !r )
-// 		std::cerr << "Failed to parse hosts file: " << filename << std::endl;
-
-// 	return std::move(items);
-// }
 
 HostnameList NetmonHosts::createHostNameTree( const std::string & filename ) const
 {
