@@ -16,8 +16,10 @@ class QTableView;
 class QToolBar;
 
 class NetmonHostlistModel;
-class NetmonProcessListModel;
+class NetmonHostlistProxy;
 
+class NetmonProcessListModel;
+class NetmonProcessListProxy;
 
 class NetmonWindow : public QMainWindow
 {
@@ -35,6 +37,7 @@ private:
 	NetmonHosts netmonHosts;
 
 	NetmonHostlistModel *model_hostlist;
+	NetmonHostlistProxy *proxy_hostlist;
 	QTreeView *view_hostlist;
 
 	NetmonProcessListModel *model_processes;

@@ -1,8 +1,13 @@
 FIND_PACKAGE(Qt4 REQUIRED)
 
 SET(netmon-qt_SOURCES netmon-qt.cpp ../src/netmon-hosts.cpp
-                      netmon-qt-window.cpp hostlistmodel.cpp processlistmodel.cpp)
-SET(netmon-qt_HEADERS netmon-qt-window.cpp hostlistmodel.hpp processlistmodel.hpp)
+                      netmon-qt-window.cpp
+		      hostlistmodel.cpp hostlistproxy.cpp
+		      processlistmodel.cpp)
+
+SET(netmon-qt_HEADERS netmon-qt-window.cpp
+                      hostlistmodel.hpp hostlistproxy.hpp
+		      processlistmodel.hpp)
 
 SET(netmon-qt_RESOURCES images.qrc)
 

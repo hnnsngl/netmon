@@ -1,5 +1,6 @@
 #include "netmon-qt-window.hpp"
 #include "hostlistmodel.hpp"
+#include "hostlistproxy.hpp"
 #include "processlistmodel.hpp"
 #include "netmon-lib.hpp"
 #include "netmon-hosts.hpp"
@@ -50,7 +51,10 @@ NetmonWindow::NetmonWindow()
 	splitter->addWidget( frame_hostlist );
 	QVBoxLayout *layout_hostlist = new QVBoxLayout(frame_hostlist);
 	view_hostlist = new QTreeView(frame_hostlist);
-	view_hostlist->setModel( model_hostlist );
+	view_hostlist->setModel( proxy_hostlist );
+	view_hostlist->expandAll();
+	view_hostlist->setSortingEnabled(true);
+	view_hostlist->sortByColumn(0, Qt::AscendingOrder);
 	layout_hostlist->addWidget(view_hostlist);
 
 	/* processes frame */
@@ -108,8 +112,11 @@ NetmonWindow::~NetmonWindow()
 
 void NetmonWindow::createModels()
 {
-	model_hostlist = new NetmonHostlistModel(netmonHosts, this); // FIXME
+	model_hostlist = new NetmonHostlistModel(netmonHosts, this);
 	model_processes = new NetmonProcessListModel(this);
+
+	proxy_hostlist = new NetmonHostlistProxy(netmonHosts, this);
+	proxy_hostlist->setSourceModel(model_hostlist);
 }
 
 void NetmonWindow::createToolbar()
