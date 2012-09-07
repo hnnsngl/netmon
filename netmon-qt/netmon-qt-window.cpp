@@ -29,7 +29,7 @@ void createHostList(const NetmonHosts& netmonHosts)
 	for( const auto& group : netmonHosts.hostnames )
 		for( const auto& host : group.second ){
 			std::cerr << "# add to hostList: " << host << std::endl;
-			hostList[host] = HostListItem(host);
+			hostList[host] = build_HostListItem(host, 9221);
 		}
 }
 
@@ -37,7 +37,7 @@ NetmonWindow::NetmonWindow()
 	: netmonHosts(QDir::homePath().toStdString() + std::string("/.netmon-hosts"))
 {
 	createHostList(netmonHosts);
-	refresh_HostList_blocking(9221);
+	// refresh_HostList_blocking(9221);
 	print_HostList();
 	createModels();
 

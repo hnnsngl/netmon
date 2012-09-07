@@ -51,7 +51,7 @@ struct HostListItem {
 		  uptime("NoInfo"),  processors(1), avgload1(0), avgload2(0), avgload3(0), 
 	    cpuinfo("NoInfo"), meminfo("NoInfo")
   {}
-	HostListItem( const std::string& hostname_ )
+	explicit HostListItem( const std::string& hostname_ )
 	  : alive(false), hostname(hostname_), cpuname("NoInfo"), memory("NoInfo"), load("NoInfo"), 
 	    uptime("NoInfo"), processors(1), avgload1(0), avgload2(0), avgload3(0), 
 	    cpuinfo("NoInfo"), meminfo("NoInfo")

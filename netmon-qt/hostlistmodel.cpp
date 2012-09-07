@@ -15,6 +15,9 @@ NetmonHostlistModel::NetmonHostlistModel( NetmonHosts & _netmonHosts, QObject *p
 NetmonHostlistModel::~NetmonHostlistModel()
 {}
 
+extern HostList hostList;
+extern std::mutex mutexList;
+
 // usage of internalId: positive hostitems refer to hostgroups, hostgroups refer to -1
 
 QModelIndex NetmonHostlistModel::index( int row, int col, const QModelIndex &parent ) const
@@ -85,8 +88,8 @@ QVariant NetmonHostlistModel::data( const QModelIndex &index, int role ) const
 		}
 
 	else {
-		std::string group = netmonHosts.hostGroups[index.internalId()];
-		const HostListItem & hostitem = netmonHosts.hostnames[group][index.row()];
+		const std::string group = netmonHosts.hostGroups[index.internalId()];
+		const HostListItem & hostitem = hostList[netmonHosts.hostnames[group][index.row()]];
 		switch(role){
 		case Qt::DisplayRole:
 			switch(index.column()){
