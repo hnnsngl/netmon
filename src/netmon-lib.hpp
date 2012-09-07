@@ -82,7 +82,7 @@ HostListItem sort_fullMessage(const std::string& host, const std::string& messag
   if( message.empty() ){
     return tmpitem;
   }
-
+  tmpitem.alive = true;
   std::string flag_system("system");
   std::string flag_memory("memory");
   std::string flag_cpuinfo("cpuinfo");
@@ -126,10 +126,12 @@ HostListItem sort_fullMessage(const std::string& host, const std::string& messag
     ss << res[1]; ss >> tmpitem.avgload1;
     ss << res[2]; ss >> tmpitem.avgload1;
     ss << res[3]; ss >> tmpitem.avgload1;
+    tmpitem.load = res[1];
   }else{
     tmpitem.avgload1 = std::numeric_limits<double>::quiet_NaN();
     tmpitem.avgload2 = std::numeric_limits<double>::quiet_NaN();
     tmpitem.avgload3 = std::numeric_limits<double>::quiet_NaN();
+    tmpitem.load = "NoInfo";
   }
 
   // parse memory
