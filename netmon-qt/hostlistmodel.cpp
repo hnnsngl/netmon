@@ -103,7 +103,7 @@ QVariant NetmonHostlistModel::data( const QModelIndex &index, int role ) const
 			}
 		case Qt::ToolTipRole:
 			switch(index.column()){
-			case 1: return QString(hostitem.cpuinfo.c_str());
+			case 1: return QVariant() ; return QString(hostitem.cpuinfo.c_str());
 			case 2: return QString(hostitem.meminfo.c_str());
 			}
 		case Qt::DecorationRole:

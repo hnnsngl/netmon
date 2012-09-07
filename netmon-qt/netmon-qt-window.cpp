@@ -38,7 +38,7 @@ NetmonWindow::NetmonWindow()
 {
 	createHostList(netmonHosts);
 	// refresh_HostList_blocking(9221);
-	print_HostList();
+	print_HostList(false);
 	createModels();
 
 	// main parts
@@ -57,7 +57,7 @@ NetmonWindow::NetmonWindow()
 	QFrame *frame_processes = new QFrame(this);
 	splitter->addWidget( frame_processes );
 	QVBoxLayout *layout_processes = new QVBoxLayout(frame_processes);
-	view_processes = new QTableView(frame_processes);
+	view_processes = new QTreeView(frame_processes);
 	view_processes->setModel( model_processes );
 	layout_processes->addWidget(view_processes);
 
