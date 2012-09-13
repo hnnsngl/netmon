@@ -28,6 +28,5 @@ class NetmonProcessListModel : public QAbstractItemModel
 	QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const;
 	QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
-private:
 	std::vector<std::string> hostIndex;
 };

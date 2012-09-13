@@ -55,19 +55,18 @@ QModelIndex NetmonProcessListModel::index( int row, int col, const QModelIndex &
 	size_t machineId = 0;
 	size_t base = 0;
 
-	qDebug("processlistmodel::index row=%d, col=%d", row, col );
-
+	// qDebug("processlistmodel::index row=%d, col=%d", row, col );
 	if( (col < 0) || row < 0 )
 		return QModelIndex();
-	if( col >= headNames.size() )
+	if( static_cast<size_t>(col) >= headNames.size() )
 		return QModelIndex();
 
 	while( base + hostList[hostIndex[machineId]].ProcessList.size() < static_cast<size_t>(row) )
 		base += hostList[hostIndex[machineId++]].ProcessList.size();
 
 	int processid = row - base;
-	if( (machineId < hostList.size()) && 
-	    (processid < hostList[hostIndex[machineId]].ProcessList.size()) ){
+	if( (static_cast<size_t>(machineId) < hostList.size()) && 
+	    (static_cast<size_t>(processid) < hostList[hostIndex[machineId]].ProcessList.size()) ){
 		ProcessIndex id(machineId, processid);
 
 		return createIndex( row, col, id );
@@ -93,8 +92,6 @@ int NetmonProcessListModel::rowCount( const QModelIndex &parent ) const
 	for( const auto host : hostList )
 		rows += host.second.ProcessList.size();
 
-	qDebug("::rows = %d", rows);
-
 	return rows;
 }
 
@@ -105,9 +102,8 @@ int NetmonProcessListModel::columnCount( const QModelIndex &parent ) const
 
 QVariant NetmonProcessListModel::data( const QModelIndex &index, int role ) const
 {
-
 	int column = index.column();
-	if( column >= headNames.size() ) return QVariant();
+	if( static_cast<size_t>(column) >= headNames.size() ) return QVariant();
 
 	// fetch the needed ProcessListItem
 	const ProcessIndex id(index.internalId());
@@ -117,11 +113,11 @@ QVariant NetmonProcessListModel::data( const QModelIndex &index, int role ) cons
 
 	switch(role){
 	case Qt::DisplayRole:
-		qDebug("processes::data host=%s, count=%d, columns=%d, row=%d, col=%d",
-		       host.hostname.c_str(), host.ProcessList.size(), headNames.size(), index.row(), index.column());
+		// qDebug("processes::data host=%s, count=%d, columns=%d, row=%d, col=%d",
+		//        host.hostname.c_str(), host.ProcessList.size(), headNames.size(), index.row(), index.column());
 		return QString(process.items.at(column).c_str());
+		return QString("Host=%1, Item=%2") .arg(id.hostId) .arg(id.processId);
 	}
-	std::cerr<< "data::done"<< std::endl;
 	return QVariant();
 }
 

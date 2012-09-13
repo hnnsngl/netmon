@@ -32,7 +32,7 @@ QModelIndex NetmonHostlistModel::index( int row, int col, const QModelIndex &par
 		//        row, col, parent.row(), parent.internalId());
 		return createIndex( row, col, parent.row() );
 	}
-
+	qDebug("returning invalid index!");
 	return QModelIndex();
 }
 
@@ -89,11 +89,12 @@ QVariant NetmonHostlistModel::data( const QModelIndex &index, int role ) const
 
 	else {
 		const std::string group = netmonHosts.hostGroups[index.internalId()];
+		const std::string hostname = netmonHosts.hostnames[group][index.row()];
 		const HostListItem & hostitem = hostList[netmonHosts.hostnames[group][index.row()]];
 		switch(role){
 		case Qt::DisplayRole:
 			switch(index.column()){
-			case 0: return QString(hostitem.hostname.c_str());
+			case 0: return QString(hostname.c_str());
 			case 1: return QString(hostitem.cpuname.c_str());
 			case 2: return QString(hostitem.memory.c_str());
 			case 3: return QString(hostitem.load.c_str());

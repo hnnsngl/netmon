@@ -4,9 +4,6 @@
 
 #include <QSortFilterProxyModel>
 #include <string>
-#include <sstream>
-#include <iostream>
-#include <cstdlib>
 
 extern HostList hostList;
 
@@ -35,7 +32,6 @@ bool NetmonHostlistProxy::lessThan( const QModelIndex &left,
 	case 4:												// Uptime
 		double lval = lhs.left(lhs.indexOf(" ", 0)).toDouble();
 		double rval = rhs.left(rhs.indexOf(" ", 0)).toDouble();
-		std::cout << "compare '" << lval << "' < '" << rval << "'" << std::endl;
 		return lval < rval;
 	}
 
@@ -52,7 +48,7 @@ bool NetmonHostlistProxy::filterAcceptsRow( int sourceRow,
 			std::string host  = netmonHosts.hostnames[group][sourceRow];
 			return hostList[host].alive;
 		}
-		else true;
+		else return true;
 	}
 
 	return true;

@@ -22,6 +22,7 @@
 #include <QKeyEvent>
 #include <QSplitter>
 #include <QDir>
+#include <QItemSelectionModel>
 
 #include <iostream>
 #include <string>
@@ -38,8 +39,10 @@ void createHostList(const NetmonHosts& netmonHosts)
 }
 
 NetmonWindow::NetmonWindow()
-	: netmonHosts(QDir::homePath().toStdString() + std::string("/.netmon-hosts"))
+	: netmonHosts(QDir::homePath().toStdString() + std::string("/.netmon-hosts")),
+	  hostSelected(netmonHosts)
 {
+ // FIXME: move this stuff to the main program file main() function
 	createHostList(netmonHosts);
 	// refresh_HostList_blocking(9221);
 	print_HostList(false);
@@ -58,7 +61,10 @@ NetmonWindow::NetmonWindow()
 	view_hostlist->expandAll();
 	view_hostlist->setSortingEnabled(true);
 	view_hostlist->sortByColumn(0, Qt::AscendingOrder);
+	view_hostlist->setSelectionMode( QAbstractItemView::ExtendedSelection ); // could also use ::MultipleSeclection here
 	layout_hostlist->addWidget(view_hostlist);
+	connect(view_hostlist->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+	        this, SLOT(HostSelectionChanged(const QItemSelection&, const QItemSelection&)));
 
 	/* processes frame */
 	QFrame *frame_processes = new QFrame(this);
@@ -66,6 +72,8 @@ NetmonWindow::NetmonWindow()
 	QVBoxLayout *layout_processes = new QVBoxLayout(frame_processes);
 	view_processes = new QTreeView(frame_processes);
 	view_processes->setModel( proxy_processes );
+	view_processes->setSortingEnabled(true);
+	view_processes->setSelectionMode( QAbstractItemView::NoSelection );
 	layout_processes->addWidget(view_processes);
 
 	// /** settings frame */
@@ -115,6 +123,34 @@ NetmonWindow::NetmonWindow()
 void NetmonWindow::filterUpdate()
 {}
 
+void NetmonWindow::HostSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+{
+	auto toggleSelection = [&](const QModelIndex&item, bool enable)
+		{
+			if( item.isValid() && item.column()==0 ){
+				std::string itemname = item.data().toString().toStdString();
+				if( item.parent().isValid() )	hostSelected.selectHost(itemname, enable);
+				else hostSelected.selectGroup(itemname, enable);
+			}
+		};
+
+	qDebug("HostSelectionsChanged:");
+	for( const auto & index : selected.indexes() ){
+		if(index.column()==0){
+			toggleSelection( index, true );
+		}
+	}
+	for( const auto & index : deselected.indexes() ){
+		if(index.column()==0){
+			toggleSelection( index, false );
+		}
+	}
+
+	hostSelected.print(std::cerr);
+
+	proxy_processes->invalidate();
+}
+
 NetmonWindow::~NetmonWindow()
 {}
 
@@ -125,9 +161,8 @@ void NetmonWindow::createModels()
 	proxy_hostlist->setSourceModel(model_hostlist);
 
 	model_processes = new NetmonProcessListModel(this);
-	proxy_processes = new NetmonProcessListProxy(this);
+	proxy_processes = new NetmonProcessListProxy(hostSelected, this);
 	proxy_processes->setSourceModel(model_processes);
-
 }
 
 void NetmonWindow::createToolbar()

@@ -11,6 +11,8 @@ class NetmonHostlistModel : public QAbstractItemModel
 {
 	Q_OBJECT
 
+	NetmonHosts & netmonHosts;
+
 public:
 	NetmonHostlistModel( NetmonHosts & _netmonHosts, QObject *parent );
 	virtual ~NetmonHostlistModel();
@@ -22,8 +24,4 @@ public:
 	int columnCount( const QModelIndex& parent = QModelIndex() ) const;
 	virtual QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const;
 	virtual QVariant headerData(int section, Qt::Orientation, int role) const;
-
-private:
-
-	NetmonHosts & netmonHosts;
 };

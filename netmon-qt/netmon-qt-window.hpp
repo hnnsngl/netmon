@@ -1,10 +1,11 @@
-#include "netmon-types.hpp"
 #include "netmon-hosts.hpp"
+#include "netmon-selections.hpp"
+#include "netmon-types.hpp"
 
 #include <QMainWindow>
 #include <QObject>
 #include <QWidget>
-
+#include <unordered_map>
 
 class QAction;
 class QObject;
@@ -14,6 +15,9 @@ class QToolBox;
 class QTreeView;
 class QTableView;
 class QToolBar;
+
+class QItemSelectionModel;
+class QItemSelection;
 
 class NetmonHostlistModel;
 class NetmonHostlistProxy;
@@ -32,11 +36,14 @@ public:
 
 public slots:
 	void filterUpdate();
+	void HostSelectionChanged ( const QItemSelection & selected, const QItemSelection & deselected );
 
 private:
 	NetmonHosts netmonHosts;
+	HostSelections hostSelected;
 
 	NetmonHostlistModel *model_hostlist;
+	QItemSelectionModel *hosts_selected;
 	NetmonHostlistProxy *proxy_hostlist;
 	QTreeView *view_hostlist;
 
