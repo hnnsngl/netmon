@@ -92,7 +92,7 @@ void NetmonWindow::createModels()
 	model_processes = new NetmonProcessListModel(this);
 	proxy_processes = new NetmonProcessListProxy(hostSelected, this);
 	proxy_processes->setSourceModel(model_processes);
-
+	proxy_processes->toggleUserFilter(false);
 
 	/* processes view */
 	view_processes = new QTreeView(this);
@@ -129,8 +129,9 @@ void NetmonWindow::createToolbar()
   connect(hosts_collapse, SIGNAL(triggered()), view_hostlist, SLOT(collapseAll()));
 
   filter_user = new QAction(tr("Own Processes"), this);
-  filter_user->setIcon(QIcon(":/images/placeholder.png"));
-  connect(filter_user, SIGNAL(triggered()), this, SLOT(filterUpdate()));
+  filter_user->setIcon(QIcon(":/images/filter-user.png"));
+  filter_user->setCheckable(true);
+  connect(filter_user, SIGNAL(toggled(bool)), proxy_processes, SLOT(toggleUserFilter(bool)));
 
   filter_hosts_dead = new QAction(tr("Filter Dead Hosts"), this);
   filter_hosts_dead->setIcon(QIcon(":/images/host-offline.png"));

@@ -52,7 +52,7 @@ private:
 	NetmonProcessListProxy *proxy_processes;
 	QTreeView * view_processes;
 
-	QToolBar *mainToolBar, *filterToolbar;
+	QToolBar *mainToolBar;
 
 	QAction *main_exit, *main_update;
 	QAction *hosts_expand, *hosts_collapse;
