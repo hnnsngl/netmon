@@ -2,7 +2,6 @@
 
 #include <string>
 #include <unordered_map>
-#include <iostream>
 
 // number of selections per hostname (because a host may be selected multiple times)
 class	HostSelections
@@ -20,17 +19,14 @@ public:
 	{
 		// check/sanitize hostname
 
-		std::cerr << "preselect host " << hostname << " / " << enabled << " / " << items[hostname] << std::endl;
 		if( enabled )
-			items[hostname]++;
+			items[hostname]++ ;
 		else
-			items[hostname]--;
-		std::cerr << "selecting host " << hostname << " / " << enabled << " / " << items[hostname] << std::endl;
+			items[hostname]-- ;
 	}
 
 	void selectGroup( std::string hostgroup, bool enabled )
 	{
-		std::cerr << "selecting group " << hostgroup << " / " << enabled << std::endl;
 		for( const auto & hostname : netmonHosts.hostnames[hostgroup] )
 			selectHost(hostname, enabled);
 	}
