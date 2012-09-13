@@ -5,5 +5,10 @@
   <file>images/host-offline.png</file>
   <file>images/host-online.png</file>
   <file>images/refresh.png</file>
+  <file>images/host-ok.png</file>
+  <file>images/host-down.png</file>
+  <file>images/filter-user.png</file>
+  <file>images/arrow-up.png</file>
+  <file>images/arrow-down.png</file>
 </qresource>
 </RCC>
