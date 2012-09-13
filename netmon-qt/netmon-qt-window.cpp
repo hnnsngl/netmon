@@ -149,7 +149,9 @@ void NetmonWindow::HostSelectionChanged(const QItemSelection& selected, const QI
 		}
 	}
 
+#ifdef DEBUG
 	hostSelected.print(std::cerr);
+#endif
 
 	proxy_processes->invalidate();
 }

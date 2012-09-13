@@ -23,7 +23,6 @@ NetmonProcessListModel::NetmonProcessListModel( QObject *parent )
 	auto host = hostList.begin();
 	while( (host != hostList.end()) && (!host->second.alive) ) ++host;
 	for( const auto& head : host->second.HeaderProcessList ){
-		std::cout << "# add process list header " << head << std::endl;
 		headNames.push_back( head );
 	}
 
