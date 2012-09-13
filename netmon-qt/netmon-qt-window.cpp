@@ -62,6 +62,7 @@ NetmonWindow::NetmonWindow()
 	view_hostlist->setSortingEnabled(true);
 	view_hostlist->sortByColumn(0, Qt::AscendingOrder);
 	view_hostlist->setSelectionMode( QAbstractItemView::ExtendedSelection ); // could also use ::MultipleSeclection here
+	view_hostlist->resizeColumnToContents(0);
 	layout_hostlist->addWidget(view_hostlist);
 	connect(view_hostlist->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
 	        this, SLOT(HostSelectionChanged(const QItemSelection&, const QItemSelection&)));
@@ -73,7 +74,9 @@ NetmonWindow::NetmonWindow()
 	view_processes = new QTreeView(frame_processes);
 	view_processes->setModel( proxy_processes );
 	view_processes->setSortingEnabled(true);
+	view_hostlist->resizeColumnToContents(0);
 	view_processes->setSelectionMode( QAbstractItemView::NoSelection );
+	view_processes->setAlternatingRowColors(true);
 	layout_processes->addWidget(view_processes);
 
 	// /** settings frame */

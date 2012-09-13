@@ -19,6 +19,8 @@ class NetmonProcessListModel : public QAbstractItemModel
 	~NetmonProcessListModel();
 
 	std::vector<std::string> headNames;
+	std::vector<std::string> column;
+	std::vector<std::string> header;
 
 	// AbstractItemModel Interface (required methods)	
 	QModelIndex index( int row, int col, const QModelIndex& parent = QModelIndex() ) const;

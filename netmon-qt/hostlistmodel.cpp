@@ -109,28 +109,18 @@ QVariant NetmonHostlistModel::data( const QModelIndex &index, int role ) const
 			}
 		case Qt::DecorationRole:
 			switch(index.column()){
-			case 0: return QVariant(QPixmap(":/images/placeholder.png").scaledToHeight(16));
+			case 0:
+				if( hostitem.alive )
+					return QVariant(QPixmap(":/images/host-online.png").scaledToHeight(12));
+				else
+					return QVariant(QPixmap(":/images/host-offline.png").scaledToHeight(12));
+
 			}
-		case Qt::SizeHintRole:
-			switch(index.column()){
-			case 0: return QVariant(512);
-			}
+
 		default:
 			return QVariant();
 		}
 	}
-	// case Qt::DecorationRole:
-	// 	// The data to be rendered as a decoration in the form of an icon. (QColor, QIcon or QPixmap)
-	// 	//
-	// 	// use for icons ?
-	// 	break;
-
-	// case Qt::BackgroundRole:
-	// 	// The background brush used for items rendered with the default delegate. (QBrush)
-	// 	//
-	// 	// use to color the background of the load field, or possibly the entire host item
-	// 	break;
-	// }		
 
 	return QVariant();
 }
@@ -155,8 +145,7 @@ QVariant NetmonHostlistModel::headerData(int section, Qt::Orientation orientatio
 		}
 		return QString("%1") .arg(section);	
 	case Qt::SizeHintRole:
-		switch(section)
-		case 0: return QSize(600,16);
+		if(section == 0) return QSize(0,0);
 	}
 	return QVariant();
 }

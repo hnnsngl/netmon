@@ -12,7 +12,7 @@ HostgroupList NetmonHosts::createHostgroupList( const HostnameList & hostnames )
 {
 	HostgroupList groups;
 	if(hostnames.size() > 0)
-		for( const auto it : hostnames )
+		for( const auto & it : hostnames )
 			groups.push_back(it.first);
 
 	std::sort( groups.begin(), groups.end() );
@@ -47,7 +47,7 @@ HostnameList NetmonHosts::createHostNameTree( const std::string & filename ) con
 	HostnameList list;
 	std::string groupname = "Default Group";
 	list[groupname] = std::vector<std::string>();
-	for( const auto item : items ){
+	for( const auto & item : items ){
 		switch(item[0]){
 		case '[':
 			groupname = item.substr(1,item.size()-2);;
@@ -55,7 +55,7 @@ HostnameList NetmonHosts::createHostNameTree( const std::string & filename ) con
 			list[groupname] = std::vector<std::string>();
 			break;
 		case '@':
-			for(const auto triple : getNetGroupTriples( item.substr(1) ) ){
+			for(const auto & triple : getNetGroupTriples( item.substr(1) ) ){
 				if(triple.hostname.size() > 0)
 					list[groupname].push_back(triple.hostname);
 			}
@@ -83,10 +83,10 @@ HostnameList NetmonHosts::createHostNameTree( const std::string & filename ) con
 std::ostream& operator<< ( std::ostream & os, const NetmonHosts & netmonHosts )
 {
 	std::cout << "# Netmon Hosts " << netmonHosts.hostnames.size() << std::endl;
-	for( const auto group : netmonHosts.hostnames ){
+	for( const auto & group : netmonHosts.hostnames ){
 		os << "[" << group.first << "]" << std::endl;
 
-		for( const auto host : group.second )
+		for( const auto & host : group.second )
 			os << host << std::endl;
 		// os << "##END group" << std::endl;
 	}

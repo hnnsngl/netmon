@@ -2,6 +2,8 @@
 #include "netmon-types.hpp"
 #include "netmon-hosts.hpp"
 
+#include <QBrush>
+
 #include <cassert>
 #include <QDebug>
 #include <iostream>
@@ -9,12 +11,14 @@
 extern HostList   hostList;
 extern std::mutex mutexList;
 
+
 NetmonProcessListModel::NetmonProcessListModel( QObject *parent )
 	: QAbstractItemModel(parent)
 {
 	// build the host list
 	for( const auto& host : hostList )
 		hostIndex.push_back(host.first);
+
 	// build the header name list
 	auto host = hostList.begin();
 	while( (host != hostList.end()) && (!host->second.alive) ) ++host;
@@ -22,6 +26,9 @@ NetmonProcessListModel::NetmonProcessListModel( QObject *parent )
 		std::cout << "# add process list header " << head << std::endl;
 		headNames.push_back( head );
 	}
+
+	column = { "Hostname", "CMD", "UID", "STIME", "TIME", "RSS", "C", "S"};
+	header = { "Hostname", "Command", "User", "Started", "CPU time", "RSS (kB)", "CPU usage", "S" };
 }
 
 NetmonProcessListModel::~NetmonProcessListModel()
@@ -97,41 +104,43 @@ int NetmonProcessListModel::rowCount( const QModelIndex &parent ) const
 
 int NetmonProcessListModel::columnCount( const QModelIndex &parent ) const
 {
-	return headNames.size();
+	return column.size();
 }
 
 QVariant NetmonProcessListModel::data( const QModelIndex &index, int role ) const
 {
-	int column = index.column();
-	if( static_cast<size_t>(column) >= headNames.size() ) return QVariant();
+	int col = index.column();
+	if( static_cast<size_t>(col) >= headNames.size() ) return QVariant();
 
 	// fetch the needed ProcessListItem
+	std::string item = "No Info";
 	const ProcessIndex id(index.internalId());
-
 	const HostListItem & host = hostList[hostIndex.at(id.hostId)];
-	const ProcessListItem & process = host.ProcessList.at(id.processId);
+	if( index.column() == 0 ){
+		item = host.hostname;
+	} else {
+		const ProcessListItem & process = host.ProcessList.at(id.processId);
+		auto it = host.HeadToIndex.find( column[col] );
+		if( it != host.HeadToIndex.cend() ) 
+			item = process.items[ it->second ];
+	}
 
 	switch(role){
 	case Qt::DisplayRole:
-		// qDebug("processes::data host=%s, count=%d, columns=%d, row=%d, col=%d",
-		//        host.hostname.c_str(), host.ProcessList.size(), headNames.size(), index.row(), index.column());
-		return QString(process.items.at(column).c_str());
-		return QString("Host=%1, Item=%2") .arg(id.hostId) .arg(id.processId);
+	case Qt::ToolTipRole:
+		return QString(item.c_str());
 	}
 	return QVariant();
 }
 
 QVariant NetmonProcessListModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	// qDebug("NetmonProcessListModel::headerData section=%d, role=%d, orientation=%d",
-	//        section, role, orientation);
-
 	if( orientation == Qt::Vertical )
 		return QVariant();
 
 	switch(role){
 	case Qt::DisplayRole:
-		return QString(headNames[section].c_str());
+		return QString(header[section].c_str());
 	}
 
 	return QVariant();
