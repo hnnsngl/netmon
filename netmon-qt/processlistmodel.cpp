@@ -26,8 +26,8 @@ NetmonProcessListModel::NetmonProcessListModel( QObject *parent )
 		headNames.push_back( head );
 	}
 
-	column = { "Hostname", "CMD", "UID", "STIME", "TIME", "RSS", "C", "S"};
-	header = { "Hostname", "Command", "User", "Started", "CPU time", "RSS (kB)", "CPU usage", "S" };
+	column = { "Host", "CMD", "UID", "STIME", "TIME", "RSS", "C", "S"};
+	header = { "Host", "Command", "User", "Started", "CPU time", "RSS (kB)", "CPU usage", "S" };
 }
 
 NetmonProcessListModel::~NetmonProcessListModel()
