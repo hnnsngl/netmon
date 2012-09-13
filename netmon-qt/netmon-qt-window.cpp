@@ -38,60 +38,85 @@ void createHostList(const NetmonHosts& netmonHosts)
 		}
 }
 
+NetmonWindow::~NetmonWindow()
+{}
+
 NetmonWindow::NetmonWindow()
 	: netmonHosts(QDir::homePath().toStdString() + std::string("/.netmon-hosts")),
 	  hostSelected(netmonHosts)
 {
  // FIXME: move this stuff to the main program file main() function
 	createHostList(netmonHosts);
-	// refresh_HostList_blocking(9221);
-	print_HostList(false);
 	createModels();
 
 	// main parts
 	QSplitter *splitter = new QSplitter(Qt::Vertical, this);
 	setCentralWidget(splitter);
 
-	/* host list frame */
+	// add host and process view widgets
 	QFrame *frame_hostlist = new QFrame(this);
-	splitter->addWidget( frame_hostlist );
 	QVBoxLayout *layout_hostlist = new QVBoxLayout(frame_hostlist);
-	view_hostlist = new QTreeView(frame_hostlist);
+	layout_hostlist->addWidget(view_hostlist);
+	splitter->addWidget( frame_hostlist );
+
+	QFrame *frame_processes = new QFrame(this);
+	QVBoxLayout *layout_processes = new QVBoxLayout(frame_processes);
+	layout_processes->addWidget(view_processes);
+	splitter->addWidget( frame_processes );
+
+	createToolbar();
+}
+
+void NetmonWindow::filterUpdate()
+{}
+
+void NetmonWindow::createModels()
+{
+	// host list data and proxy model
+	model_hostlist = new NetmonHostlistModel(netmonHosts, this);
+	proxy_hostlist = new NetmonHostlistProxy(netmonHosts, this);
+	proxy_hostlist->setSourceModel(model_hostlist);
+
+	/* host list view */
+	view_hostlist = new QTreeView(this);
 	view_hostlist->setModel( proxy_hostlist );
 	view_hostlist->expandAll();
 	view_hostlist->setSortingEnabled(true);
 	view_hostlist->sortByColumn(0, Qt::AscendingOrder);
 	view_hostlist->setSelectionMode( QAbstractItemView::ExtendedSelection ); // could also use ::MultipleSeclection here
 	view_hostlist->resizeColumnToContents(0);
-	layout_hostlist->addWidget(view_hostlist);
 	connect(view_hostlist->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
 	        this, SLOT(HostSelectionChanged(const QItemSelection&, const QItemSelection&)));
 
-	/* processes frame */
-	QFrame *frame_processes = new QFrame(this);
-	splitter->addWidget( frame_processes );
-	QVBoxLayout *layout_processes = new QVBoxLayout(frame_processes);
-	view_processes = new QTreeView(frame_processes);
+	// process list data and proxy model
+	model_processes = new NetmonProcessListModel(this);
+	proxy_processes = new NetmonProcessListProxy(hostSelected, this);
+	proxy_processes->setSourceModel(model_processes);
+
+
+	/* processes view */
+	view_processes = new QTreeView(this);
 	view_processes->setModel( proxy_processes );
 	view_processes->setSortingEnabled(true);
 	view_hostlist->resizeColumnToContents(0);
 	view_processes->setSelectionMode( QAbstractItemView::NoSelection );
 	view_processes->setAlternatingRowColors(true);
-	layout_processes->addWidget(view_processes);
 
-	// /** settings frame */
-	// QFrame *frame_settings = new QFrame(this);
-	// toolbox->addWidgetaddItem( frame_settings, tr("Settings") );
-	// QVBoxLayout *layout_settings = new QVBoxLayout(frame_settings);
-	// QPushButton* button = new QPushButton( "This Button does &Nothing", frame_settings );
-	// layout_settings->addWidget(button);
+}
 
+void NetmonWindow::createToolbar()
+{
 	/** actions */
 	main_exit = new QAction(tr("&Exit"), this);
   main_exit->setIcon(QIcon(":/images/application-exit.png"));
   main_exit->setShortcut(tr("Ctrl+Q"));
   main_exit->setStatusTip(tr("Exit"));
   connect(main_exit, SIGNAL(triggered()), qApp, SLOT(quit()));
+
+  main_update = new QAction(tr("&Update"), this);
+  main_update->setIcon(QIcon(":/images/refresh.png"));
+  main_update->setShortcut(tr("R"));
+  connect(main_update, SIGNAL(triggered()), this, SLOT(updateAll()));
 
   hosts_expand = new QAction(tr("Expand Host Groups"), this);
   hosts_expand->setIcon(QIcon(":/images/placeholder.png"));
@@ -115,6 +140,7 @@ NetmonWindow::NetmonWindow()
 	/** toolbar */
   mainToolBar = addToolBar(tr("&Netmon"));
   mainToolBar->addAction(main_exit);
+  mainToolBar->addAction(main_update);
   mainToolBar->addAction(hosts_expand);
   mainToolBar->addAction(hosts_collapse);
   mainToolBar->addAction(filter_user);
@@ -123,8 +149,7 @@ NetmonWindow::NetmonWindow()
   // filterToolbar->addAction(filter_own_processes);
 }
 
-void NetmonWindow::filterUpdate()
-{}
+
 
 void NetmonWindow::HostSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
@@ -137,7 +162,6 @@ void NetmonWindow::HostSelectionChanged(const QItemSelection& selected, const QI
 			}
 		};
 
-	qDebug("HostSelectionsChanged:");
 	for( const auto & index : selected.indexes() ){
 		if(index.column()==0){
 			toggleSelection( index, true );
@@ -156,20 +180,27 @@ void NetmonWindow::HostSelectionChanged(const QItemSelection& selected, const QI
 	proxy_processes->invalidate();
 }
 
-NetmonWindow::~NetmonWindow()
-{}
-
-void NetmonWindow::createModels()
+void updateModelIndexes( const QModelIndex& index, QAbstractItemView* view )
 {
-	model_hostlist = new NetmonHostlistModel(netmonHosts, this);
-	proxy_hostlist = new NetmonHostlistProxy(netmonHosts, this);
-	proxy_hostlist->setSourceModel(model_hostlist);
-
-	model_processes = new NetmonProcessListModel(this);
-	proxy_processes = new NetmonProcessListProxy(hostSelected, this);
-	proxy_processes->setSourceModel(model_processes);
+	int row = 0;
+	while( index.sibling(row,0).isValid() ){
+		int col = 0;
+		while( index.sibling(row, col).isValid() ){
+			view->update(index.sibling(row, col));
+			col++;
+		}
+		updateModelIndexes( index.child(row, 0), view );
+		row++;
+	}
 }
 
-void NetmonWindow::createToolbar()
+
+
+void NetmonWindow::updateAll()
 {
+	refresh_HostList_blocking(9221);
+	print_HostList(false);
+
+	updateModelIndexes( view_hostlist->model()->index(0, 0, QModelIndex()), view_hostlist );
+	updateModelIndexes( view_processes->model()->index(0, 0, QModelIndex()), view_processes );
 }

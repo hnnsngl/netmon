@@ -4,5 +4,6 @@
   <file>images/placeholder.png</file>
   <file>images/host-offline.png</file>
   <file>images/host-online.png</file>
+  <file>images/refresh.png</file>
 </qresource>
 </RCC>
