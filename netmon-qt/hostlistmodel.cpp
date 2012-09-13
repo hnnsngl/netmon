@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QPixmap>
 
+
 NetmonHostlistModel::NetmonHostlistModel( NetmonHosts & _netmonHosts, QObject *parent )
 	: QAbstractItemModel(parent),
 	  netmonHosts(_netmonHosts)
@@ -102,19 +103,31 @@ QVariant NetmonHostlistModel::data( const QModelIndex &index, int role ) const
 			default:
 				return QString("item: Row%1, Column%2") .arg(index.row() + 1) .arg(index.column() + 1);
 			}
+			return QVariant();
+
 		case Qt::ToolTipRole:
-			switch(index.column()){
+			switch( index.column() ){
 			case 1: return QVariant() ; return QString(hostitem.cpuinfo.c_str());
 			case 2: return QString(hostitem.meminfo.c_str());
 			}
+			return QVariant();
+
+		case Qt::BackgroundRole:
+			switch( index.column() ){
+			case 3:
+				if( ! hostitem.alive ) return QVariant();
+				int hue = 120 - 60*hostitem.avgload1/std::max(1,hostitem.processors);
+				QColor color = QColor::fromHsv(std::max(0, std::min(359, static_cast<int>(hue))) , 255, 255 );
+				return QBrush(color);
+			}
+			return QVariant();
+
 		case Qt::DecorationRole:
 			switch(index.column()){
 			case 0:
 				if( hostitem.alive )
 					return QVariant(QPixmap(":/images/host-online.png").scaledToHeight(12));
-				else
-					return QVariant(QPixmap(":/images/host-offline.png").scaledToHeight(12));
-
+				else return QVariant(QPixmap(":/images/host-offline.png").scaledToHeight(12));
 			}
 
 		default:
