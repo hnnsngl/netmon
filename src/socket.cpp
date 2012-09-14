@@ -80,6 +80,7 @@ bool Socket::connect( const std::string host, const int port ){
   }else{
     // convert adress in ip-address
     host_info = gethostbyname( host.c_str() );
+    std::cerr << host_info << "\n";
     if( host_info == NULL ){
       return false;
     }
