@@ -81,7 +81,7 @@ bool Socket::connect( const std::string host, const int port ){
     // convert adress in ip-address
     host_info = gethostbyname( host.c_str() );
     if( host_info == NULL ){
-      std::cerr << "Can't resolve host\n";
+      std::cerr << "Can't resolve host: " << host << "\n";
       return false;
     }
     std::cerr << host_info->h_name << "\n";
