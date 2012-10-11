@@ -86,6 +86,7 @@ void NetmonWindow::createModels()
 	view_hostlist->sortByColumn(0, Qt::AscendingOrder);
 	view_hostlist->setSelectionMode( QAbstractItemView::ExtendedSelection ); // could also use ::MultipleSeclection here
 	view_hostlist->resizeColumnToContents(0);
+	view_hostlist->setAlternatingRowColors(true);
 	connect(view_hostlist->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
 	        this, SLOT(HostSelectionChanged(const QItemSelection&, const QItemSelection&)));
 
