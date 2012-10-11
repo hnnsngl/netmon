@@ -42,20 +42,21 @@ void NetmonProcessListProxy::toggleUserFilter( bool enable )
 bool NetmonProcessListProxy::filterAcceptsRow( int sourceRow,
                                                const QModelIndex &sourceParent ) const
 {
-	// filter selected hosts
-	NetmonProcessListModel *model = dynamic_cast<NetmonProcessListModel*>(sourceModel());
-	int internalId = sourceModel()->index( sourceRow, 0, sourceParent ).internalId();
-	std::string hostname = model->hostIndex[internalId >> 16];
-	// std::cerr << "filtering " << hostname << " : " << hostSelected[hostname] << std::endl;
-
 	bool acceptUser = true;
 	if( userFilter ) {
 		QString uid = sourceModel()->index( sourceRow, userFilterColumn, sourceParent).data().toString();
 		acceptUser = (QString::compare( uid, userFilterString ) == 0);
 	}
 
-	if( hostSelected[hostname] )
-		qDebug("serving row for %s: %d", hostname.c_str(), sourceRow );
+	// filter selected hosts
+	NetmonProcessListModel *model = dynamic_cast<NetmonProcessListModel*>(sourceModel());
+	int internalId = sourceModel()->index( sourceRow, 0, sourceParent ).internalId();
+	std::string hostname = model->hostIndex[internalId >> 16];
+	// std::cerr << "filtering " << hostname << " : " << hostSelected[hostname] << std::endl;
+	bool acceptHost = hostSelected[hostname] || hostSelected.empty();
 
-	return hostSelected[hostname] && acceptUser;
+	// if( hostSelected[hostname] )
+	// 	qDebug("serving row for %s: %d", hostname.c_str(), sourceRow );
+
+	return acceptHost && acceptUser;
 }
