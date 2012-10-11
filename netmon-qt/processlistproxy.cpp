@@ -53,5 +53,8 @@ bool NetmonProcessListProxy::filterAcceptsRow( int sourceRow,
 		acceptUser = (QString::compare( uid, userFilterString ) == 0);
 	}
 
+	if( hostSelected[hostname] )
+		qDebug("serving row for %s: %d", hostname.c_str(), sourceRow );
+
 	return hostSelected[hostname] && acceptUser;
 }
