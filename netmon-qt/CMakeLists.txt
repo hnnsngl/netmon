@@ -23,7 +23,6 @@ ADD_DEFINITIONS(${QT_DEFINITIONS})
 
 ADD_EXECUTABLE(netmon-qt
                ${netmon-qt_SOURCES}
-	       ${netmon-qt_HEADERS_MOC}
 	       ${netmon-qt_RESOURCES_RCC}
 	       ${TRANSLATIONS})
 

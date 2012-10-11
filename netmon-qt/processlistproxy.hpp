@@ -1,3 +1,5 @@
+#pragma once
+
 #include <QSortFilterProxyModel>
 
 #include "netmon-types.hpp"

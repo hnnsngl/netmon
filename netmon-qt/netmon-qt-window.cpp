@@ -219,6 +219,5 @@ void NetmonWindow::showAboutDialog()
 	                     QString("Netmon version 0.1\n"
 	                             "License: GPL version 3 or later\n"
 	                             "Authors: Martin Marenz and Hannes Nagel\n"
-	                             "Sources: git clone ssh://boell.physik.uni-leipzig.de/home/nagel/src/netmon\n"
-	                             ) );
+	                             "Sources: git clone ssh://boell.physik.uni-leipzig.de/home/nagel/src/netmon\n" ) );
 }

@@ -1,6 +1,12 @@
+#pragma once
+
 #include "netmon-hosts.hpp"
 #include "netmon-selections.hpp"
 #include "netmon-types.hpp"
+#include "hostlistmodel.hpp"
+#include "hostlistproxy.hpp"
+#include "processlistmodel.hpp"
+#include "processlistproxy.hpp"
 
 #include <QMainWindow>
 #include <QObject>
@@ -18,12 +24,6 @@ class QToolBar;
 
 class QItemSelectionModel;
 class QItemSelection;
-
-class NetmonHostlistModel;
-class NetmonHostlistProxy;
-
-class NetmonProcessListModel;
-class NetmonProcessListProxy;
 
 class NetmonWindow : public QMainWindow
 {
