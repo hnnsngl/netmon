@@ -7,6 +7,7 @@
 #include <QVariant>
 #include <cstdlib>
 #include <iostream>
+#include <algorithm>
 
 NetmonProcessListProxy::NetmonProcessListProxy( HostSelections & selected, QObject *parent )
 	: QSortFilterProxyModel(parent), hostSelected(selected),
