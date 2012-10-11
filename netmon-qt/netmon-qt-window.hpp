@@ -39,6 +39,8 @@ public slots:
 	void HostSelectionChanged ( const QItemSelection & selected, const QItemSelection & deselected );
 	void updateAll();
 
+	void showAboutDialog();
+
 private:
 	NetmonHosts netmonHosts;
 	HostSelections hostSelected;
@@ -57,6 +59,7 @@ private:
 	QAction *main_exit, *main_update;
 	QAction *hosts_expand, *hosts_collapse;
 	QAction *filter_user, *filter_hosts_dead;
+	QAction *main_about;
 
 	void createModels();
 	void createToolbar();
