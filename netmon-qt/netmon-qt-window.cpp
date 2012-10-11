@@ -23,6 +23,7 @@
 #include <QSplitter>
 #include <QDir>
 #include <QItemSelectionModel>
+#include <QLineEdit>
 #include <QMessageBox>
 
 #include <iostream>
@@ -54,6 +55,10 @@ NetmonWindow::NetmonWindow()
 	QSplitter *splitter = new QSplitter(Qt::Vertical, this);
 	setCentralWidget(splitter);
 
+	filterEdit = new QLineEdit(this);
+	connect(filterEdit, SIGNAL(textChanged(const QString)),
+	        proxy_processes, SLOT(updateTextFilter(const QString)));
+	
 	// add host and process view widgets
 	QFrame *frame_hostlist = new QFrame(this);
 	QVBoxLayout *layout_hostlist = new QVBoxLayout(frame_hostlist);
@@ -150,9 +155,11 @@ void NetmonWindow::createToolbar()
   mainToolBar->addAction(main_update);
   mainToolBar->addAction(hosts_expand);
   mainToolBar->addAction(hosts_collapse);
+  mainToolBar->addWidget(filterEdit);
   mainToolBar->addAction(filter_user);
   mainToolBar->addAction(filter_hosts_dead);
   mainToolBar->addAction(main_about);
+
 
   // filterToolbar = addToolBar(tr("&Filter"));
   // filterToolbar->addAction(filter_own_processes);
@@ -216,9 +223,9 @@ void NetmonWindow::updateAll()
 
 void NetmonWindow::showAboutDialog()
 {
-	QMessageBox::about ( 0, QString("About Netmon"),
-	                     QString("Netmon version 0.1\n"
-	                             "License: GPL version 3 or later\n"
-	                             "Authors: Martin Marenz and Hannes Nagel\n"
-	                             "Sources: git clone ssh://boell.physik.uni-leipzig.de/home/nagel/src/netmon\n" ) );
+	QMessageBox::about( this, QString("About Netmon"),
+	                    QString("Netmon version 0.1\n"
+	                            "License: GPL version 3 or later\n"
+	                            "Authors: Martin Marenz and Hannes Nagel\n"
+	                            "Sources: git clone ssh://boell.physik.uni-leipzig.de/home/nagel/src/netmon\n" ) );
 }

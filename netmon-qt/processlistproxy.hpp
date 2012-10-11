@@ -22,6 +22,7 @@ class NetmonProcessListProxy : public QSortFilterProxyModel
 	bool userFilter;
 	int userFilterColumn;
 	QString userFilterString;
+	QString commandFilterString;
 
 public:
 
@@ -29,6 +30,7 @@ public:
 
 public slots:
 	void toggleUserFilter( bool enable );
+	void updateTextFilter( const QString & text );
 
 protected:
 	bool filterAcceptsRow( int sourceRow, const QModelIndex &sourceParent ) const;

@@ -6,8 +6,12 @@
 #include <QString>
 #include <QVariant>
 #include <cstdlib>
+#include <mutex>
 #include <iostream>
 #include <algorithm>
+
+extern HostList hostList;
+extern std::mutex mutexList;
 
 NetmonProcessListProxy::NetmonProcessListProxy( HostSelections & selected, QObject *parent )
 	: QSortFilterProxyModel(parent), hostSelected(selected),
@@ -39,6 +43,12 @@ void NetmonProcessListProxy::toggleUserFilter( bool enable )
 	invalidateFilter();
 }
 
+void NetmonProcessListProxy::updateTextFilter(const QString &text)
+{
+	commandFilterString = text;
+	invalidateFilter();
+}
+
 bool NetmonProcessListProxy::filterAcceptsRow( int sourceRow,
                                                const QModelIndex &sourceParent ) const
 {
@@ -48,15 +58,42 @@ bool NetmonProcessListProxy::filterAcceptsRow( int sourceRow,
 		acceptUser = (QString::compare( uid, userFilterString ) == 0);
 	}
 
-	// filter selected hosts
 	NetmonProcessListModel *model = dynamic_cast<NetmonProcessListModel*>(sourceModel());
 	int internalId = sourceModel()->index( sourceRow, 0, sourceParent ).internalId();
+
+	// filter selected hosts
 	std::string hostname = model->hostIndex[internalId >> 16];
 	// std::cerr << "filtering " << hostname << " : " << hostSelected[hostname] << std::endl;
+
+	ProcessIndex index(internalId);
+	const HostListItem & host = hostList[hostname];
+	bool acceptUserFilter = true;
+	if( host.alive ){
+		const ProcessListItem & process = host.ProcessList.at(index.processId);
+		auto it = host.HeadToIndex.find( "CMD" );
+		QString command = "";
+		if( it != host.HeadToIndex.cend() )
+			command = QString::fromStdString( process.items[it->second] );
+		std::cerr << hostname << "\t" << command.toStdString() << std::endl;
+		acceptUserFilter = commandFilterString.isEmpty() || command.contains(commandFilterString);
+	}
+
+	// user text filter
 	bool acceptHost = hostSelected[hostname] || hostSelected.empty();
 
-	// if( hostSelected[hostname] )
+	// if( hostSelected[hostname] )78
 	// 	qDebug("serving row for %s: %d", hostname.c_str(), sourceRow );
 
-	return acceptHost && acceptUser;
+	return acceptHost && acceptUser && acceptUserFilter;
 }
+
+
+
+
+
+
+
+
+
+
+

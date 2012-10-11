@@ -16,6 +16,7 @@
 class QAction;
 class QObject;
 class QHBoxLayout;
+class QLineEdit;
 class QTabWidget;
 class QToolBox;
 class QTreeView;
@@ -60,6 +61,8 @@ private:
 	QAction *hosts_expand, *hosts_collapse;
 	QAction *filter_user, *filter_hosts_dead;
 	QAction *main_about;
+
+	QLineEdit *filterEdit;
 
 	void createModels();
 	void createToolbar();
