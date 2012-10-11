@@ -63,8 +63,8 @@ bool NetmonProcessListProxy::filterAcceptsRow( int sourceRow,
 
 	// filter selected hosts
 	std::string hostname = model->hostIndex[internalId >> 16];
-	// std::cerr << "filtering " << hostname << " : " << hostSelected[hostname] << std::endl;
 
+	// filter commands by user supplied string
 	ProcessIndex index(internalId);
 	const HostListItem & host = hostList[hostname];
 	bool acceptUserFilter = true;
@@ -74,15 +74,11 @@ bool NetmonProcessListProxy::filterAcceptsRow( int sourceRow,
 		QString command = "";
 		if( it != host.HeadToIndex.cend() )
 			command = QString::fromStdString( process.items[it->second] );
-		std::cerr << hostname << "\t" << command.toStdString() << std::endl;
 		acceptUserFilter = commandFilterString.isEmpty() || command.contains(commandFilterString);
 	}
 
 	// user text filter
 	bool acceptHost = hostSelected[hostname] || hostSelected.empty();
-
-	// if( hostSelected[hostname] )78
-	// 	qDebug("serving row for %s: %d", hostname.c_str(), sourceRow );
 
 	return acceptHost && acceptUser && acceptUserFilter;
 }
