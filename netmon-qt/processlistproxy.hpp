@@ -7,6 +7,12 @@
 
 class HostSelections;
 
+/**
+ *  Proxy class for sorting and filtering of process list items
+ *  delivered by NetmonProcessListModel. Implements basic sorting of
+ *  process items and filtering of by a single username and a list of
+ *  host selections.='
+ */
 class NetmonProcessListProxy : public QSortFilterProxyModel
 {
 	Q_OBJECT
