@@ -123,10 +123,10 @@ HostListItem sort_fullMessage(const std::string& host, const std::string& messag
   // parse laod
   sysreg = R"(load average:\s(\d+.\d+),\s(\d+.\d+),\s(\d+.\d+))";
   if( boost::regex_search(system, res, sysreg) ){
-    std::stringstream ss;
-    ss << res[1]; ss >> tmpitem.avgload1;
-    ss << res[2]; ss >> tmpitem.avgload1;
-    ss << res[3]; ss >> tmpitem.avgload1;
+    std::stringstream ss1, ss2, ss3;
+    ss1 << res[1]; ss1 >> tmpitem.avgload1;
+    ss2 << res[2]; ss2 >> tmpitem.avgload2;
+    ss3 << res[3]; ss3 >> tmpitem.avgload3;
     tmpitem.load = res[1];
   }else{
     tmpitem.avgload1 = std::numeric_limits<double>::quiet_NaN();
