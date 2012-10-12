@@ -96,7 +96,7 @@ QVariant NetmonHostlistModel::data( const QModelIndex &index, int role ) const
 		case Qt::DisplayRole:
 			switch(index.column()){
 			case 0: return QString(hostname.c_str());
-			case 1: return QString(hostitem.cpuname.c_str());
+			case 1: return QString("%2 (%1 cores)") .arg(hostitem.processors) .arg(hostitem.cpuname.c_str());
 			case 2: return QString(hostitem.memory.c_str());
 			case 3: return QString(hostitem.load.c_str());
 			case 4: return QString(hostitem.uptime.c_str());

@@ -59,10 +59,10 @@ private:
 
 	QAction *main_exit, *main_update;
 	QAction *hosts_expand, *hosts_collapse;
-	QAction *filter_user, *filter_hosts_dead;
+	QAction *filter_user, *filter_command, *filter_hosts_dead;
 	QAction *main_about;
 
-	QLineEdit *filterEdit;
+	QLineEdit *commandFilterEdit, *userFilterEdit;
 
 	void createModels();
 	void createToolbar();
