@@ -175,16 +175,18 @@ void NetmonWindow::createToolbar()
 
 	/** toolbar */
   mainToolBar = addToolBar(tr("&Netmon"));
-  mainToolBar->addAction(main_exit);
   mainToolBar->addAction(main_update);
-  mainToolBar->addAction(hosts_expand);
-  mainToolBar->addAction(hosts_collapse);
-  mainToolBar->addAction(filter_command);
-  mainToolBar->addWidget(commandFilterEdit);
-  mainToolBar->addAction(filter_user);
-  mainToolBar->addWidget(userFilterEdit);
+  // mainToolBar->addAction(hosts_expand);
+  // mainToolBar->addAction(hosts_collapse);
   mainToolBar->addAction(filter_hosts_dead);
+  mainToolBar->addSeparator();
+  mainToolBar->addWidget(commandFilterEdit);
+  mainToolBar->addAction(filter_command);
+  mainToolBar->addWidget(userFilterEdit);
+  mainToolBar->addAction(filter_user);
+  mainToolBar->addSeparator();
   mainToolBar->addAction(main_about);
+  mainToolBar->addAction(main_exit);
 
 
   // filterToolbar = addToolBar(tr("&Filter"));

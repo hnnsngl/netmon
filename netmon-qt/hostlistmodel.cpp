@@ -128,10 +128,12 @@ QVariant NetmonHostlistModel::data( const QModelIndex &index, int role ) const
 				if( hostitem.alive )
 					return QVariant(QPixmap(":/images/host-ok.png").scaledToHeight(12));
 				else return QVariant(QPixmap(":/images/host-down.png").scaledToHeight(12));
+			case 3:
 				if( (hostitem.avgload1 > hostitem.avgload2) && (hostitem.avgload2 > hostitem.avgload3) )
 					return QPixmap(":/images/arrow-up.png").scaledToHeight(12);
 				if( (hostitem.avgload1 < hostitem.avgload2) && (hostitem.avgload2 < hostitem.avgload3) )
 					return QPixmap(":/images/arrow-down.png").scaledToHeight(12);
+				return QPixmap(":/images/placeholder.png").scaledToHeight(12);
 			}
 
 		default:
