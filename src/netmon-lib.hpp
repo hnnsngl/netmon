@@ -165,9 +165,11 @@ HostListItem sort_fullMessage(const std::string& host, const std::string& messag
   else                                          tmpitem.processors = std::numeric_limits<int>::quiet_NaN();
 
   reg = R"(cache size\s*:\s(\d+))";
+  boost::regex(cpuinfo, res, red);
   ss.str("");ss.clear();
-  ss << tmpitem.cpuname << "\n"
-     << res[0] << "\n";
+  ss << tmpitem.cpuname << "\n";
+  ss << "Number cores: " << tmpitem.processors << "\n";
+  ss << res[0] << "\n";
   tmpitem.tooltip_cpu = ss.str();
   
 
