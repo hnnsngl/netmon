@@ -42,6 +42,9 @@ struct HostListItem {
 	std::string cpuinfo;					// complete /dev/cpuinfo for tooltip or something
 	std::string meminfo;					// complete /dev/meminfo for tooltip or something
 
+  std::string tooltip_cpu;
+  std::string tooltip_load;
+
   std::vector<std::string>                HeaderProcessList;
   std::unordered_map<std::string, size_t> HeadToIndex;
   std::vector<ProcessListItem>            ProcessList;
@@ -54,7 +57,7 @@ struct HostListItem {
 	explicit HostListItem( const std::string& hostname_ )
 	  : alive(false), hostname(hostname_), cpuname("NoInfo"), memory("NoInfo"), load("NoInfo"), 
 	    uptime("NoInfo"), processors(1), avgload1(0), avgload2(0), avgload3(0), 
-	    cpuinfo("NoInfo"), meminfo("NoInfo")
+	    cpuinfo("NoInfo"), meminfo("NoInfo"), tooltip_cpu(""), tooltip_load("")
   {}
 };
 

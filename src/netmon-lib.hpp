@@ -79,6 +79,7 @@ void refresh_HostList_blocking(const int port){
 }
 
 HostListItem sort_fullMessage(const std::string& host, const std::string& message){
+  std::stringstream ss;
   HostListItem tmpitem(host);
   if( message.empty() ){
     return tmpitem;
@@ -135,6 +136,13 @@ HostListItem sort_fullMessage(const std::string& host, const std::string& messag
     tmpitem.load = "NoInfo";
   }
 
+  ss.str("");ss.clear();
+  ss  << "load average 1: " << tmpitem.avgload1 << "\n"
+      << "load average 2: " << tmpitem.avgload2 << "\n"
+      << "load average 3: " << tmpitem.avgload3 << "\n";
+  tmpitem.tooltip_load = ss.str();
+
+
   // parse memory
   auto getMemString = [&memory](const std::string& qual) -> std::string{
     size_t pos1, pos2;
@@ -151,10 +159,16 @@ HostListItem sort_fullMessage(const std::string& host, const std::string& messag
   if( boost::regex_search(cpuinfo, res, reg) )  tmpitem.cpuname = res[1];
   else                                          tmpitem.cpuname = "No Info";
   // parse number of processors
-  std::stringstream ss;
+  ss.str("");ss.clear();
   reg = R"(cpu cores\s*:\s(\d+))";
   if( boost::regex_search(cpuinfo, res, reg) )  {ss << res[1]; ss >> tmpitem.processors;}
   else                                          tmpitem.processors = std::numeric_limits<int>::quiet_NaN();
+
+  reg = R"(cache size\s*:\s(\d+))";
+  ss.str("");ss.clear();
+  ss << tmpitem.cpuname << "\n"
+     << res[0] << "\n";
+  tmpitem.tooltip_cpu = ss.str();
   
 
   // parsing process list - this is not be done by regex due to the very regular output from netmon-agent
