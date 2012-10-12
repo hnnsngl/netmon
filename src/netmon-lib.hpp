@@ -152,7 +152,7 @@ HostListItem sort_fullMessage(const std::string& host, const std::string& messag
   else                                          tmpitem.cpuname = "No Info";
   // parse number of processors
   std::stringstream ss;
-  reg = R"(processor\s*:\s(\d+))";
+  reg = R"(cpu cores\s*:\s(\d+))";
   if( boost::regex_search(cpuinfo, res, reg) )  {ss << res[1]; ss >> tmpitem.processors;}
   else                                          tmpitem.processors = std::numeric_limits<int>::quiet_NaN();
   
@@ -211,7 +211,7 @@ void print_HostList( bool printProcesses ){
   extern HostList hostList;
   for( auto &host: hostList ){
     std::cout << "##### " << host.second.hostname << " #####\n";
-    std::cout << "CPU: " << host.second.processors << "x " << host.second.cpuname << "\n";
+    std::cout << "CPU: "  << host.second.cpuname << " - " << host.second.processors << " cores\n";
     std::cout << "RAM: " << host.second.memory << "\n";
     std::cout << "Uptime: " << host.second.uptime << "\n";
     std::cout << "Load: " << host.second.avgload1 << ", " << host.second.avgload2 << ", " << host.second.avgload3 << "\n";
