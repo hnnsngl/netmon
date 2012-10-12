@@ -84,7 +84,6 @@ bool Socket::connect( const std::string host, const int port ){
       std::cerr << "Can't resolve host: " << host << "\n";
       return false;
     }
-    std::cerr << host_info->h_name << "\n";
     memcpy( (char *) &m_addr.sin_addr, host_info->h_addr, host_info->h_length);
   }
   m_addr.sin_family = AF_INET;
