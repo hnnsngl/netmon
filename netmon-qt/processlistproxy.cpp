@@ -6,7 +6,12 @@
 #include <QString>
 #include <QVariant>
 #include <cstdlib>
+#include <mutex>
 #include <iostream>
+#include <algorithm>
+
+extern HostList hostList;
+extern std::mutex mutexList;
 
 NetmonProcessListProxy::NetmonProcessListProxy( HostSelections & selected, QObject *parent )
 	: QSortFilterProxyModel(parent), hostSelected(selected),
@@ -38,20 +43,53 @@ void NetmonProcessListProxy::toggleUserFilter( bool enable )
 	invalidateFilter();
 }
 
+void NetmonProcessListProxy::updateTextFilter(const QString &text)
+{
+	commandFilterString = text;
+	invalidateFilter();
+}
+
 bool NetmonProcessListProxy::filterAcceptsRow( int sourceRow,
                                                const QModelIndex &sourceParent ) const
 {
-	// filter selected hosts
-	NetmonProcessListModel *model = dynamic_cast<NetmonProcessListModel*>(sourceModel());
-	int internalId = sourceModel()->index( sourceRow, 0, sourceParent ).internalId();
-	std::string hostname = model->hostIndex[internalId >> 16];
-	// std::cerr << "filtering " << hostname << " : " << hostSelected[hostname] << std::endl;
-
 	bool acceptUser = true;
 	if( userFilter ) {
 		QString uid = sourceModel()->index( sourceRow, userFilterColumn, sourceParent).data().toString();
 		acceptUser = (QString::compare( uid, userFilterString ) == 0);
 	}
 
-	return hostSelected[hostname] && acceptUser;
+	NetmonProcessListModel *model = dynamic_cast<NetmonProcessListModel*>(sourceModel());
+	int internalId = sourceModel()->index( sourceRow, 0, sourceParent ).internalId();
+
+	// filter selected hosts
+	std::string hostname = model->hostIndex[internalId >> 16];
+
+	// filter commands by user supplied string
+	ProcessIndex index(internalId);
+	const HostListItem & host = hostList[hostname];
+	bool acceptUserFilter = true;
+	if( host.alive ){
+		const ProcessListItem & process = host.ProcessList.at(index.processId);
+		auto it = host.HeadToIndex.find( "CMD" );
+		QString command = "";
+		if( it != host.HeadToIndex.cend() )
+			command = QString::fromStdString( process.items[it->second] );
+		acceptUserFilter = commandFilterString.isEmpty() || command.contains(commandFilterString);
+	}
+
+	// user text filter
+	bool acceptHost = hostSelected[hostname] || hostSelected.empty();
+
+	return acceptHost && acceptUser && acceptUserFilter;
 }
+
+
+
+
+
+
+
+
+
+
+

@@ -12,6 +12,7 @@
 #include <limits>
 #include <unordered_map>
 #include <sstream>
+#include <iostream>
 
 #include <boost/regex.hpp>
 

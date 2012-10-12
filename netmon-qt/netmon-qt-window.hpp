@@ -1,6 +1,12 @@
+#pragma once
+
 #include "netmon-hosts.hpp"
 #include "netmon-selections.hpp"
 #include "netmon-types.hpp"
+#include "hostlistmodel.hpp"
+#include "hostlistproxy.hpp"
+#include "processlistmodel.hpp"
+#include "processlistproxy.hpp"
 
 #include <QMainWindow>
 #include <QObject>
@@ -10,6 +16,7 @@
 class QAction;
 class QObject;
 class QHBoxLayout;
+class QLineEdit;
 class QTabWidget;
 class QToolBox;
 class QTreeView;
@@ -18,12 +25,6 @@ class QToolBar;
 
 class QItemSelectionModel;
 class QItemSelection;
-
-class NetmonHostlistModel;
-class NetmonHostlistProxy;
-
-class NetmonProcessListModel;
-class NetmonProcessListProxy;
 
 class NetmonWindow : public QMainWindow
 {
@@ -38,6 +39,8 @@ public slots:
 	void filterUpdate();
 	void HostSelectionChanged ( const QItemSelection & selected, const QItemSelection & deselected );
 	void updateAll();
+
+	void showAboutDialog();
 
 private:
 	NetmonHosts netmonHosts;
@@ -57,6 +60,9 @@ private:
 	QAction *main_exit, *main_update;
 	QAction *hosts_expand, *hosts_collapse;
 	QAction *filter_user, *filter_hosts_dead;
+	QAction *main_about;
+
+	QLineEdit *filterEdit;
 
 	void createModels();
 	void createToolbar();

@@ -23,6 +23,8 @@
 #include <QSplitter>
 #include <QDir>
 #include <QItemSelectionModel>
+#include <QLineEdit>
+#include <QMessageBox>
 
 #include <iostream>
 #include <string>
@@ -53,6 +55,10 @@ NetmonWindow::NetmonWindow()
 	QSplitter *splitter = new QSplitter(Qt::Vertical, this);
 	setCentralWidget(splitter);
 
+	filterEdit = new QLineEdit(this);
+	connect(filterEdit, SIGNAL(textChanged(const QString)),
+	        proxy_processes, SLOT(updateTextFilter(const QString)));
+	
 	// add host and process view widgets
 	QFrame *frame_hostlist = new QFrame(this);
 	QVBoxLayout *layout_hostlist = new QVBoxLayout(frame_hostlist);
@@ -85,6 +91,7 @@ void NetmonWindow::createModels()
 	view_hostlist->sortByColumn(0, Qt::AscendingOrder);
 	view_hostlist->setSelectionMode( QAbstractItemView::ExtendedSelection ); // could also use ::MultipleSeclection here
 	view_hostlist->resizeColumnToContents(0);
+	view_hostlist->setAlternatingRowColors(true);
 	connect(view_hostlist->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
 	        this, SLOT(HostSelectionChanged(const QItemSelection&, const QItemSelection&)));
 
@@ -118,6 +125,10 @@ void NetmonWindow::createToolbar()
   main_update->setShortcut(tr("R"));
   connect(main_update, SIGNAL(triggered()), this, SLOT(updateAll()));
 
+  main_about = new QAction(tr("About Netmon"), this);
+  main_about->setIcon(QIcon(":/images/placeholder.png"));
+  connect(main_about, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
+
   hosts_expand = new QAction(tr("Expand Host Groups"), this);
   hosts_expand->setIcon(QIcon(":/images/placeholder.png"));
   hosts_expand->setShortcut(tr("Ctrl++"));
@@ -144,8 +155,12 @@ void NetmonWindow::createToolbar()
   mainToolBar->addAction(main_update);
   mainToolBar->addAction(hosts_expand);
   mainToolBar->addAction(hosts_collapse);
+  mainToolBar->addWidget(filterEdit);
   mainToolBar->addAction(filter_user);
   mainToolBar->addAction(filter_hosts_dead);
+  mainToolBar->addAction(main_about);
+
+
   // filterToolbar = addToolBar(tr("&Filter"));
   // filterToolbar->addAction(filter_own_processes);
 }
@@ -204,4 +219,13 @@ void NetmonWindow::updateAll()
 
 	updateModelIndexes( view_hostlist->model()->index(0, 0, QModelIndex()), view_hostlist );
 	updateModelIndexes( view_processes->model()->index(0, 0, QModelIndex()), view_processes );
+}
+
+void NetmonWindow::showAboutDialog()
+{
+	QMessageBox::about( this, QString("About Netmon"),
+	                    QString("Netmon version 0.1\n"
+	                            "License: GPL version 3 or later\n"
+	                            "Authors: Martin Marenz and Hannes Nagel\n"
+	                            "Sources: git clone ssh://boell.physik.uni-leipzig.de/home/nagel/src/netmon\n" ) );
 }

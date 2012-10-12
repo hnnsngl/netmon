@@ -18,12 +18,13 @@ if(BOOST_LIBRARYDIR)
   set(BOOST_LIBRARYDIR ${BOOST_LIBRARYDIR})
   message("search for boost library dir in " ${BOOST_LIBRARYDIR})
 endif()
-find_package(Boost COMPONENTS program_options system filesystem regex REQUIRED)
+find_package(Boost COMPONENTS program_options system regex REQUIRED)
 
 # set compiler options
 
-set(CMAKE_CXX_COMPILER g++)
-add_definitions(-pedantic -Wall -O2 -g -funroll-loops -std=c++0x -static )
+set(CMAKE_CXX_COMPILER g++-4.6)
+set(CMAKE_C_COMPILER gcc-4.6)
+add_definitions(-pedantic -Wall -O2 -g -funroll-loops -std=c++0x )
 
 link_directories    ( ${Boost_LIBRARY_DIRS} )
 include_directories ( ${Boost_INCLUDE_DIRS} )
