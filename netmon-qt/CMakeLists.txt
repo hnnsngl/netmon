@@ -6,12 +6,14 @@ INCLUDE(${QT_USE_FILE})
 
 # MESSAGE( STATUS ${SOURCES_CPP} )
 
-SET(netmon-qt_SOURCES netmon-qt.cpp ../src/netmon-hosts.cpp
+SET(netmon-qt_SOURCES netmon-qt.cpp ../src/netmon-hosts.cpp ../src/netmon-lib.cpp
                       netmon-qt-window.cpp
+		      netmon-updater.cpp
 		      hostlistmodel.cpp hostlistproxy.cpp
 		      processlistmodel.cpp processlistproxy.cpp)
 
 SET(netmon-qt_HEADERS netmon-qt-window.cpp
+                      netmon-updater.hpp
                       hostlistmodel.hpp hostlistproxy.hpp
 		      processlistmodel.hpp processlistproxy.hpp)
 
