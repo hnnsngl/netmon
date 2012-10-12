@@ -37,6 +37,7 @@ void createHostList(const NetmonHosts& netmonHosts)
 	for( const auto& group : netmonHosts.hostnames )
 		for( const auto& host : group.second ){
 			std::cerr << "# add to hostList: " << host << std::endl;
+			// hostList[host] = HostListItem(host);
 			hostList[host] = build_HostListItem(host, 9221);
 		}
 }
@@ -46,11 +47,17 @@ NetmonWindow::~NetmonWindow()
 
 NetmonWindow::NetmonWindow()
 	: netmonHosts(QDir::homePath().toStdString() + std::string("/.netmon-hosts")),
-	  hostSelected(netmonHosts)
+	  hostSelected(netmonHosts),
+	  updater(this, 5)
 {
- // FIXME: move this stuff to the main program file main() function
+	// FIXME: move this stuff to the main program file main() function
 	createHostList(netmonHosts);
 	createModels();
+
+	// start updater thread
+	updater.start();
+	connect( &updater, SIGNAL(updatedHostList(void)),
+	         this, SLOT(updateAll(void)) );
 
 	// main parts
 	QSplitter *splitter = new QSplitter(Qt::Vertical, this);
@@ -132,7 +139,7 @@ void NetmonWindow::createToolbar()
   main_update->setIcon(QIcon(":/images/refresh.png"));
   main_update->setShortcut(tr("R"));
   connect(main_update, SIGNAL(triggered()),
-          this, SLOT(updateAll()));
+          &updater, SLOT(forceUpdate()));
 
   main_about = new QAction(tr("About Netmon"), this);
   main_about->setIcon(QIcon(":/images/placeholder.png"));
@@ -239,11 +246,9 @@ void updateModelIndexes( const QModelIndex& index, QAbstractItemView* view )
 }
 
 
-
 void NetmonWindow::updateAll()
 {
-	refresh_HostList_blocking(9221);
-	print_HostList(false);
+	// 
 
 	updateModelIndexes( view_hostlist->model()->index(0, 0, QModelIndex()), view_hostlist );
 	updateModelIndexes( view_processes->model()->index(0, 0, QModelIndex()), view_processes );

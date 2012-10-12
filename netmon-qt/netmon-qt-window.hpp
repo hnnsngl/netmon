@@ -7,6 +7,7 @@
 #include "hostlistproxy.hpp"
 #include "processlistmodel.hpp"
 #include "processlistproxy.hpp"
+#include "netmon-updater.hpp"
 
 #include <QMainWindow>
 #include <QObject>
@@ -46,6 +47,8 @@ private:
 	NetmonHosts netmonHosts;
 	HostSelections hostSelected;
 
+	NetmonUpdateThread updater;
+
 	NetmonHostlistModel *model_hostlist;
 	QItemSelectionModel *hosts_selected;
 	NetmonHostlistProxy *proxy_hostlist;
@@ -67,3 +70,19 @@ private:
 	void createModels();
 	void createToolbar();
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
