@@ -15,6 +15,7 @@ NetmonProcessListModel::NetmonProcessListModel( QObject *parent )
 	: QAbstractItemModel(parent)
 {
 	// build the host list
+	std::lock_guard<std::mutex> lock_hostList(mutexList);
 	for( const auto& host : hostList )
 		hostIndex.push_back(host.first);
 
@@ -43,6 +44,8 @@ QModelIndex NetmonProcessListModel::index( int row, int col, const QModelIndex &
 		return QModelIndex();
 	if( static_cast<size_t>(col) >= headNames.size() )
 		return QModelIndex();
+
+	std::lock_guard<std::mutex> lock_hostList(mutexList);
 
 	while( base + hostList[hostIndex[machineId]].ProcessList.size() < static_cast<size_t>(row) )
 		base += hostList[hostIndex[machineId++]].ProcessList.size();
@@ -81,6 +84,7 @@ int NetmonProcessListModel::rowCount( const QModelIndex &parent ) const
 	if(parent.isValid())
 		return 0;
 
+	std::lock_guard<std::mutex> lock_hostList(mutexList);
 	int rows = 0;
 	for( const auto host : hostList )
 		rows += host.second.ProcessList.size();
@@ -97,7 +101,9 @@ int NetmonProcessListModel::columnCount( const QModelIndex &parent ) const
 QVariant NetmonProcessListModel::data( const QModelIndex &index, int role ) const
 {
 	int col = index.column();
-	if( static_cast<size_t>(col) >= headNames.size() ) return QString("%1,%2") .arg(index.row()) .arg(index.column());
+	if( static_cast<size_t>(col) >= headNames.size() ) return QVariant();
+
+	std::lock_guard<std::mutex> lock_hostList(mutexList);
 
 	// fetch the needed ProcessListItem
 	std::string item = "No Info";
