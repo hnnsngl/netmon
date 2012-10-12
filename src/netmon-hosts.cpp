@@ -28,6 +28,20 @@ std::vector<std::string> parseHostlistFile( std::string filename )
 	boost::regex pattern
 		(R"(^[[:s:]]*([\@]?[[:alpha:]][\w\.\-]+|\[.+\])[[:s:]]*)", boost::regex::perl);
 	std::ifstream in(filename);
+	// if file does not exist, create file contents 
+	// TODO: do error handling for files
+	if( !in.good() ){
+		in.close();
+		std::cerr << "Creating default netmon configuration: " << filename
+		          << ". Edit to customize." << std::endl;
+		std::ofstream newfile(filename);
+		newfile << "[ All Workstations ]" << std::endl
+		        << "@workstation-file" << std::endl;
+		in.open(filename);
+		// ignore any errors following this ...
+	}
+
+	// read line by line, push matches to list to be processed later
 	std::string input;
 	while( std::getline( in, input ) ){
 		boost::smatch match;
