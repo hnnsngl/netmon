@@ -1,7 +1,6 @@
 include_directories(.)
 
-add_executable (netmon-client-example     netmon-client-example.cpp
-                                          ../src/netmon-lib.cpp  ../src/socket.cpp)
+add_executable (netmon-client-example     netmon-client-example.cpp)
 
 add_executable (netmon-client             netmon-client.cpp
                                           ../src/netmon-lib.cpp ../src/socket.cpp)
