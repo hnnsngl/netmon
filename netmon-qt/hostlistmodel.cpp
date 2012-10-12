@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QPixmap>
 
+#include <mutex>
 
 NetmonHostlistModel::NetmonHostlistModel( NetmonHosts & _netmonHosts, QObject *parent )
 	: QAbstractItemModel(parent),
@@ -24,13 +25,10 @@ extern std::mutex mutexList;
 QModelIndex NetmonHostlistModel::index( int row, int col, const QModelIndex &parent ) const
 {
 	if( ! parent.isValid() ){
-		// qDebug("NetmonHostlistModel::index (group level) row=%d col=%d", row, col);
 		return createIndex( row, col, -1 );
 	}
 
 	if( parent.internalId() < 0 ){
-		// qDebug("NetmonHostlistModel::index (host level) row=%d col=%d, prow=%d, pindex=%d",
-		//        row, col, parent.row(), parent.internalId());
 		return createIndex( row, col, parent.row() );
 	}
 	qDebug("returning invalid index!");
@@ -39,7 +37,6 @@ QModelIndex NetmonHostlistModel::index( int row, int col, const QModelIndex &par
 
 QModelIndex NetmonHostlistModel::parent( const QModelIndex &child ) const
 {
-	// qDebug("NetmonHostlistModel::parent");
 	if( !child.isValid() )
 		return QModelIndex();
 
@@ -89,6 +86,8 @@ QVariant NetmonHostlistModel::data( const QModelIndex &index, int role ) const
 		}
 
 	else {
+		std::lock_guard<std::mutex> lock_hostList(mutexList);
+
 		const std::string group = netmonHosts.hostGroups[index.internalId()];
 		const std::string hostname = netmonHosts.hostnames[group][index.row()];
 		const HostListItem & hostitem = hostList[netmonHosts.hostnames[group][index.row()]];
@@ -107,8 +106,9 @@ QVariant NetmonHostlistModel::data( const QModelIndex &index, int role ) const
 
 		case Qt::ToolTipRole:
 			switch( index.column() ){
-			case 1: return QVariant() ; return QString(hostitem.cpuinfo.c_str());
-			case 2: return QString(hostitem.meminfo.c_str());
+			case 1: return QString::fromStdString(hostitem.tooltip_cpu);
+			case 2: return QString::fromStdString(hostitem.meminfo);
+			case 3: return QString::fromStdString(hostitem.tooltip_load);
 			}
 			return QVariant();
 
