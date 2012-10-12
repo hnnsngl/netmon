@@ -36,7 +36,7 @@ std::vector<std::string> parseHostlistFile( std::string filename )
 		          << ". Edit to customize." << std::endl;
 		std::ofstream newfile(filename);
 		newfile << "[ All Workstations ]" << std::endl
-		        << "@workstation-file" << std::endl;
+		        << "@workstation-all" << std::endl;
 		in.open(filename);
 		// ignore any errors following this ...
 	}

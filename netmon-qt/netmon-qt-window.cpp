@@ -28,6 +28,7 @@
 
 #include <iostream>
 #include <string>
+#include <cstdlib>
 
 extern HostList hostList;
 
@@ -55,10 +56,17 @@ NetmonWindow::NetmonWindow()
 	QSplitter *splitter = new QSplitter(Qt::Vertical, this);
 	setCentralWidget(splitter);
 
-	filterEdit = new QLineEdit(this);
-	connect(filterEdit, SIGNAL(textChanged(const QString)),
-	        proxy_processes, SLOT(updateTextFilter(const QString)));
+	commandFilterEdit = new QLineEdit(this);
+	commandFilterEdit->setToolTip("Command Filter");
+	connect(commandFilterEdit, SIGNAL(textChanged(const QString)),
+	        proxy_processes, SLOT(updateCommandFilter(const QString)));
 	
+	userFilterEdit = new QLineEdit(this);
+	userFilterEdit->setText(QString(getenv("USER")));
+	userFilterEdit->setToolTip("User Filter");
+	connect(userFilterEdit, SIGNAL(textChanged(const QString)),
+	        proxy_processes, SLOT(updateUserFilter(const QString)));
+
 	// add host and process view widgets
 	QFrame *frame_hostlist = new QFrame(this);
 	QVBoxLayout *layout_hostlist = new QVBoxLayout(frame_hostlist);
@@ -123,42 +131,62 @@ void NetmonWindow::createToolbar()
   main_update = new QAction(tr("&Update"), this);
   main_update->setIcon(QIcon(":/images/refresh.png"));
   main_update->setShortcut(tr("R"));
-  connect(main_update, SIGNAL(triggered()), this, SLOT(updateAll()));
+  connect(main_update, SIGNAL(triggered()),
+          this, SLOT(updateAll()));
 
   main_about = new QAction(tr("About Netmon"), this);
   main_about->setIcon(QIcon(":/images/placeholder.png"));
-  connect(main_about, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
+  connect(main_about, SIGNAL(triggered()),
+          this, SLOT(showAboutDialog()));
 
   hosts_expand = new QAction(tr("Expand Host Groups"), this);
   hosts_expand->setIcon(QIcon(":/images/placeholder.png"));
   hosts_expand->setShortcut(tr("Ctrl++"));
-  connect(hosts_expand, SIGNAL(triggered()), view_hostlist, SLOT(expandAll()));
+  connect(hosts_expand, SIGNAL(triggered()),
+          view_hostlist, SLOT(expandAll()));
 
   hosts_collapse = new QAction(tr("Collapse Host Groups"), this);
   hosts_collapse->setIcon(QIcon(":/images/placeholder.png"));
   hosts_collapse->setShortcut(tr("Ctrl+-"));
-  connect(hosts_collapse, SIGNAL(triggered()), view_hostlist, SLOT(collapseAll()));
+  connect(hosts_collapse, SIGNAL(triggered()),
+          view_hostlist, SLOT(collapseAll()));
 
-  filter_user = new QAction(tr("Own Processes"), this);
+  filter_command = new QAction(tr("Filter Command"), this);
+  filter_command->setIcon(QIcon(":/images/placeholder.png"));
+  filter_command->setCheckable(true);
+  connect(filter_command, SIGNAL(toggled(bool)), 
+          commandFilterEdit, SLOT(setEnabled(bool)));
+  connect(filter_command, SIGNAL(toggled(bool)),
+          proxy_processes, SLOT(toggleCommandFilter(bool)));
+
+  filter_user = new QAction(tr("Filter User"), this);
   filter_user->setIcon(QIcon(":/images/filter-user.png"));
   filter_user->setCheckable(true);
-  connect(filter_user, SIGNAL(toggled(bool)), proxy_processes, SLOT(toggleUserFilter(bool)));
+  connect(filter_user, SIGNAL(toggled(bool)),
+          userFilterEdit, SLOT(setEnabled(bool)));
+  connect(filter_user, SIGNAL(toggled(bool)),
+          proxy_processes, SLOT(toggleUserFilter(bool)));
 
   filter_hosts_dead = new QAction(tr("Filter Dead Hosts"), this);
   filter_hosts_dead->setIcon(QIcon(":/images/host-offline.png"));
   filter_hosts_dead->setCheckable(true);
-  connect(filter_hosts_dead, SIGNAL(toggled(bool)), proxy_hostlist, SLOT(toggleFilter(bool)));
+  connect(filter_hosts_dead, SIGNAL(toggled(bool)),
+          proxy_hostlist, SLOT(toggleFilter(bool)));
 
 	/** toolbar */
   mainToolBar = addToolBar(tr("&Netmon"));
-  mainToolBar->addAction(main_exit);
   mainToolBar->addAction(main_update);
-  mainToolBar->addAction(hosts_expand);
-  mainToolBar->addAction(hosts_collapse);
-  mainToolBar->addWidget(filterEdit);
-  mainToolBar->addAction(filter_user);
+  // mainToolBar->addAction(hosts_expand);
+  // mainToolBar->addAction(hosts_collapse);
   mainToolBar->addAction(filter_hosts_dead);
+  mainToolBar->addSeparator();
+  mainToolBar->addWidget(commandFilterEdit);
+  mainToolBar->addAction(filter_command);
+  mainToolBar->addWidget(userFilterEdit);
+  mainToolBar->addAction(filter_user);
+  mainToolBar->addSeparator();
   mainToolBar->addAction(main_about);
+  mainToolBar->addAction(main_exit);
 
 
   // filterToolbar = addToolBar(tr("&Filter"));

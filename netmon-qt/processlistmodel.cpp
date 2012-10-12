@@ -25,8 +25,8 @@ NetmonProcessListModel::NetmonProcessListModel( QObject *parent )
 		headNames.push_back( head );
 	}
 
-	column = { "Host", "CMD", "UID", "STIME", "TIME", "RSS", "C", "S"};
-	header = { "Host", "Command", "User", "Started", "CPU time", "RSS (kB)", "CPU usage", "S" };
+	column = { "Host", "PID", "CMD", "UID", "STIME", "TIME", "RSS", "C", "S"};
+	header = { "Host", "process", "Command", "User", "Started", "CPU time", "RSS (kB)", "CPU usage", "S" };
 }
 
 NetmonProcessListModel::~NetmonProcessListModel()
@@ -47,15 +47,25 @@ QModelIndex NetmonProcessListModel::index( int row, int col, const QModelIndex &
 	while( base + hostList[hostIndex[machineId]].ProcessList.size() < static_cast<size_t>(row) )
 		base += hostList[hostIndex[machineId++]].ProcessList.size();
 
-	int processid = row - base;
+	int processId = row - base - 1;
+	// TODO: fix stupid bug fixing
+
 	if( (static_cast<size_t>(machineId) < hostList.size()) && 
-	    (static_cast<size_t>(processid) < hostList[hostIndex[machineId]].ProcessList.size()) ){
-		ProcessIndex id(machineId, processid);
+	    (static_cast<size_t>(processId) < hostList[hostIndex[machineId]].ProcessList.size()) ){
+		ProcessIndex id(machineId, processId);
+		// if( id == 0 )
+		// 	std::cerr << "creating invalid index: " << row << "\t" << col << std::endl;
 
 		return createIndex( row, col, id );
 	}
-	else return QModelIndex();
+	else{
+		// std::cerr << "return invalid model index: machineId=" << machineId << "<" << hostList.size() 
+		//           << "processId=" << processId << "<" << hostList[hostIndex[machineId]].ProcessList.size() 
+		//           << std::endl;std:
+		return QModelIndex();
+	}
 
+	// std::cerr << "return invalid model index: can this even be reached?" << std::endl;
 	return QModelIndex();
 }
 
@@ -80,13 +90,14 @@ int NetmonProcessListModel::rowCount( const QModelIndex &parent ) const
 
 int NetmonProcessListModel::columnCount( const QModelIndex &parent ) const
 {
+	// qDebug("process list columns: %d", column.size());
 	return column.size();
 }
 
 QVariant NetmonProcessListModel::data( const QModelIndex &index, int role ) const
 {
 	int col = index.column();
-	if( static_cast<size_t>(col) >= headNames.size() ) return QVariant();
+	if( static_cast<size_t>(col) >= headNames.size() ) return QString("%1,%2") .arg(index.row()) .arg(index.column());
 
 	// fetch the needed ProcessListItem
 	std::string item = "No Info";
@@ -115,7 +126,7 @@ QVariant NetmonProcessListModel::headerData(int section, Qt::Orientation orienta
 		return QVariant();
 
 	if( section < 0 || section > header.size() ){
-		qDebug("processModel::headerData invalid section!");
+		qDebug("processModel::headerData invalid section: %d", section);
 		return QString("invalid section=%1") .arg(section);
 	}
 

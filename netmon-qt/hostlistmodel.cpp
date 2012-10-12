@@ -96,7 +96,7 @@ QVariant NetmonHostlistModel::data( const QModelIndex &index, int role ) const
 		case Qt::DisplayRole:
 			switch(index.column()){
 			case 0: return QString(hostname.c_str());
-			case 1: return QString(hostitem.cpuname.c_str());
+			case 1: return QString("%2 (%1 cores)") .arg(hostitem.processors) .arg(hostitem.cpuname.c_str());
 			case 2: return QString(hostitem.memory.c_str());
 			case 3: return QString(hostitem.load.c_str());
 			case 4: return QString(hostitem.uptime.c_str());
@@ -128,10 +128,12 @@ QVariant NetmonHostlistModel::data( const QModelIndex &index, int role ) const
 				if( hostitem.alive )
 					return QVariant(QPixmap(":/images/host-ok.png").scaledToHeight(12));
 				else return QVariant(QPixmap(":/images/host-down.png").scaledToHeight(12));
+			case 3:
 				if( (hostitem.avgload1 > hostitem.avgload2) && (hostitem.avgload2 > hostitem.avgload3) )
 					return QPixmap(":/images/arrow-up.png").scaledToHeight(12);
 				if( (hostitem.avgload1 < hostitem.avgload2) && (hostitem.avgload2 < hostitem.avgload3) )
 					return QPixmap(":/images/arrow-down.png").scaledToHeight(12);
+				return QPixmap(":/images/placeholder.png").scaledToHeight(12);
 			}
 
 		default:

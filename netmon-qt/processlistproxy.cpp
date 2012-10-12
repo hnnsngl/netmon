@@ -15,9 +15,11 @@ extern std::mutex mutexList;
 
 NetmonProcessListProxy::NetmonProcessListProxy( HostSelections & selected, QObject *parent )
 	: QSortFilterProxyModel(parent), hostSelected(selected),
-	  userFilter( true ),
+	  userFilter( false ),
 	  userFilterColumn( -1 ),
-	  userFilterString( getenv("USER") )
+	  userFilterString( getenv("USER") ),
+	  commandFilter( false ),
+	  commandFilterString( "" )
 {}
 
 bool NetmonProcessListProxy::lessThan( const QModelIndex &left,
@@ -43,7 +45,19 @@ void NetmonProcessListProxy::toggleUserFilter( bool enable )
 	invalidateFilter();
 }
 
-void NetmonProcessListProxy::updateTextFilter(const QString &text)
+void NetmonProcessListProxy::updateUserFilter( const QString & text )
+{
+	userFilterString = text;
+	invalidateFilter();
+}
+
+void NetmonProcessListProxy::toggleCommandFilter( bool enable )
+{
+	commandFilter = enable;
+	invalidateFilter();
+}
+
+void NetmonProcessListProxy::updateCommandFilter(const QString &text)
 {
 	commandFilterString = text;
 	invalidateFilter();
@@ -60,28 +74,40 @@ bool NetmonProcessListProxy::filterAcceptsRow( int sourceRow,
 
 	NetmonProcessListModel *model = dynamic_cast<NetmonProcessListModel*>(sourceModel());
 	int internalId = sourceModel()->index( sourceRow, 0, sourceParent ).internalId();
+	ProcessIndex index(internalId);
 
 	// filter selected hosts
 	std::string hostname = model->hostIndex[internalId >> 16];
 
 	// filter commands by user supplied string
-	ProcessIndex index(internalId);
-	const HostListItem & host = hostList[hostname];
 	bool acceptUserFilter = true;
-	if( host.alive ){
-		const ProcessListItem & process = host.ProcessList.at(index.processId);
-		auto it = host.HeadToIndex.find( "CMD" );
-		QString command = "";
-		if( it != host.HeadToIndex.cend() )
-			command = QString::fromStdString( process.items[it->second] );
-		acceptUserFilter = commandFilterString.isEmpty() || command.contains(commandFilterString);
+	if( commandFilter ){
+		const HostListItem & host = hostList[hostname];
+		if( host.alive ){
+			const ProcessListItem & process = host.ProcessList.at(index.processId);
+			auto it = host.HeadToIndex.find( "CMD" );
+			QString command = "";
+			if( it != host.HeadToIndex.cend() )
+				command = QString::fromStdString( process.items[it->second] );
+			acceptUserFilter = commandFilterString.isEmpty() || command.contains(commandFilterString);
+		}
 	}
 
 	// user text filter
 	bool acceptHost = hostSelected[hostname] || hostSelected.empty();
 
+	// if(acceptHost)
+	// 	std::cerr << internalId << "\t" << index.hostId << "\t" << index.processId << std::endl;
+
+	// TODO: fix this
+	if( internalId == 0 ) return false;
+
 	return acceptHost && acceptUser && acceptUserFilter;
 }
+
+
+
+
 
 
 
