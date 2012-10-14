@@ -33,10 +33,12 @@ std::vector<std::string> parseHostlistFile( std::string filename )
 	if( !in.good() ){
 		in.close();
 		std::cerr << "Creating default netmon configuration: " << filename
-		          << ". Edit to customize." << std::endl;
+		          << ". Edit " << filename << " to customize." << std::endl;
 		std::ofstream newfile(filename);
-		newfile << "[ All Workstations ]" << std::endl
-		        << "@workstation-all" << std::endl;
+		newfile << "# [ group (optional) ]\n# @netgroup\n# hostname\n" << std::endl
+		        << "[ All Workstations ]\n@workstation-all" << std::endl
+		        << "[ CQT Workstations ]\n@workstation-CQT" << std::endl
+		        << "[ Other ]\nbobrowski\nbenjamin" << std::endl;
 		in.open(filename);
 		// ignore any errors following this ...
 	}
@@ -60,13 +62,14 @@ HostnameList NetmonHosts::createHostNameTree( const std::string & filename ) con
 	// add items to our host map
 	HostnameList list;
 	std::string groupname = "Default Group";
-	list[groupname] = std::vector<std::string>();
+	// list[groupname] = std::vector<std::string>();
 	for( const auto & item : items ){
 		switch(item[0]){
 		case '[':
 			groupname = item.substr(1,item.size()-2);;
 			// TODO we could cut away leading and trailing whitespace now
-			list[groupname] = std::vector<std::string>();
+
+			// list[groupname] = std::vector<std::string>();
 			break;
 		case '@':
 			for(const auto & triple : getNetGroupTriples( item.substr(1) ) ){
@@ -81,11 +84,14 @@ HostnameList NetmonHosts::createHostNameTree( const std::string & filename ) con
 		}
 	}
 
-	// // add additional default group : all hosts
+	// add additional default group : all hosts
 	// groupname = "All Hosts";
+	// std::set<std::string> allhosts;
 	// for( const auto& group : list )
 	// 	for( const auto& host : group.second )
-	// 		list[groupname].push_back(host);
+	// 		allhosts.insert(host);
+	// for( const auto& host : allhosts )
+	//   list[groupname].push_back(host);
 
 	// try to sort the individual host lists
 	for( auto& group : list )
