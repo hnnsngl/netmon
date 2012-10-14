@@ -39,7 +39,6 @@ void NetmonProcessListProxy::toggleUserFilter( bool enable )
 	if( it != model->column.cend() )
 		userFilterColumn = it - model->column.begin();
 	else userFilterColumn = -1;
-	qDebug("set up user filter: %d, %s", userFilterColumn, userFilterString.toStdString().c_str());
 
 	if( userFilterColumn >= 0 ) userFilter = enable;
 	invalidateFilter();
