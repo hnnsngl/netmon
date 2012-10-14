@@ -131,11 +131,6 @@ QVariant NetmonProcessListModel::headerData(int section, Qt::Orientation orienta
 	if( orientation == Qt::Vertical )
 		return QVariant();
 
-	if( section < 0 || section > header.size() ){
-		qDebug("processModel::headerData invalid section: %d", section);
-		return QString("invalid section=%1") .arg(section);
-	}
-
 	switch(role){
 	case Qt::DisplayRole:
 		return QString(header[section].c_str());
