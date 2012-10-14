@@ -80,7 +80,7 @@ QVariant NetmonHostlistModel::data( const QModelIndex &index, int role ) const
 	if( index.internalId() == -1 )
 		switch(role){
 		case Qt::DisplayRole: // key data to be rendered in the form of text. (QString)
-			if( index.column() == 0 ) return QString(netmonHosts.hostGroups.at(index.row() ).c_str());
+			if( index.column() == 0 ) return QString::fromStdString(netmonHosts.hostGroups.at(index.row() ));
 		default:
 			return QVariant();
 		}
@@ -94,13 +94,14 @@ QVariant NetmonHostlistModel::data( const QModelIndex &index, int role ) const
 		switch(role){
 		case Qt::DisplayRole:
 			switch(index.column()){
-			case 0: return QString(hostname.c_str());
-			case 1: return QString("%2 (%1 cores)") .arg(hostitem.processors) .arg(hostitem.cpuname.c_str());
-			case 2: return QString(hostitem.memory.c_str());
-			case 3: return QString(hostitem.load.c_str());
-			case 4: return QString(hostitem.uptime.c_str());
+			case 0: return QString::fromStdString(hostname);
+			case 1: if(hostitem.alive) return QString("%2 (%1 cores)")
+				                           .arg(hostitem.processors) .arg(hostitem.cpuname.c_str());
+			case 2: if(hostitem.alive) return QString::fromStdString(hostitem.memory);
+			case 3: if(hostitem.alive) return QString::fromStdString(hostitem.load);
+			case 4: if(hostitem.alive) return QString::fromStdString(hostitem.uptime);
 			default:
-				return QString("item: Row%1, Column%2") .arg(index.row() + 1) .arg(index.column() + 1);
+				return QVariant();
 			}
 			return QVariant();
 
@@ -129,6 +130,7 @@ QVariant NetmonHostlistModel::data( const QModelIndex &index, int role ) const
 					return QVariant(QPixmap(":/images/host-ok.png").scaledToHeight(12));
 				else return QVariant(QPixmap(":/images/host-down.png").scaledToHeight(12));
 			case 3:
+				if( ! hostitem.alive ) return QVariant();
 				if( (hostitem.avgload1 > hostitem.avgload2) && (hostitem.avgload2 > hostitem.avgload3) )
 					return QPixmap(":/images/arrow-up.png").scaledToHeight(12);
 				if( (hostitem.avgload1 < hostitem.avgload2) && (hostitem.avgload2 < hostitem.avgload3) )
