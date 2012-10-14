@@ -129,62 +129,54 @@ void NetmonWindow::createModels()
 void NetmonWindow::createToolbar()
 {
 	/** actions */
-	main_exit = new QAction(tr("&Exit"), this);
+	main_exit = new QAction(tr("&Exit Netmon"), this);
   main_exit->setIcon(QIcon(":/images/application-exit.png"));
   main_exit->setShortcut(tr("Ctrl+Q"));
   main_exit->setStatusTip(tr("Exit"));
   connect(main_exit, SIGNAL(triggered()), qApp, SLOT(quit()));
 
-  main_update = new QAction(tr("&Update"), this);
+  main_update = new QAction(tr("Force &Update"), this);
   main_update->setIcon(QIcon(":/images/refresh.png"));
   main_update->setShortcut(tr("R"));
   connect(main_update, SIGNAL(triggered()),
           &updater, SLOT(forceUpdate()));
 
   main_about = new QAction(tr("About Netmon"), this);
-  main_about->setIcon(QIcon(":/images/placeholder.png"));
+  main_about->setIcon(QIcon(":/images/netmon.svg"));
   connect(main_about, SIGNAL(triggered()),
           this, SLOT(showAboutDialog()));
 
-  hosts_expand = new QAction(tr("Expand Host Groups"), this);
-  hosts_expand->setIcon(QIcon(":/images/placeholder.png"));
-  hosts_expand->setShortcut(tr("Ctrl++"));
-  connect(hosts_expand, SIGNAL(triggered()),
-          view_hostlist, SLOT(expandAll()));
-
-  hosts_collapse = new QAction(tr("Collapse Host Groups"), this);
-  hosts_collapse->setIcon(QIcon(":/images/placeholder.png"));
-  hosts_collapse->setShortcut(tr("Ctrl+-"));
-  connect(hosts_collapse, SIGNAL(triggered()),
-          view_hostlist, SLOT(collapseAll()));
-
-  filter_command = new QAction(tr("Filter Command"), this);
-  filter_command->setIcon(QIcon(":/images/placeholder.png"));
+  filter_command = new QAction(tr("Filter processes by commands"), this);
+  filter_command->setIcon(QIcon(":/images/filter-command.png"));
   filter_command->setCheckable(true);
+  commandFilterEdit->setEnabled(false);
   connect(filter_command, SIGNAL(toggled(bool)), 
           commandFilterEdit, SLOT(setEnabled(bool)));
   connect(filter_command, SIGNAL(toggled(bool)),
           proxy_processes, SLOT(toggleCommandFilter(bool)));
 
-  filter_user = new QAction(tr("Filter User"), this);
+  filter_user = new QAction(tr("Filter processes by user name"), this);
   filter_user->setIcon(QIcon(":/images/filter-user.png"));
   filter_user->setCheckable(true);
+  // userFilterEdit->setEnabled(true);
   connect(filter_user, SIGNAL(toggled(bool)),
           userFilterEdit, SLOT(setEnabled(bool)));
   connect(filter_user, SIGNAL(toggled(bool)),
           proxy_processes, SLOT(toggleUserFilter(bool)));
+  filter_user->setChecked(true);
 
-  filter_hosts_dead = new QAction(tr("Filter Dead Hosts"), this);
-  filter_hosts_dead->setIcon(QIcon(":/images/host-offline.png"));
+  filter_hosts_dead = new QAction(tr("Select online hosts"), this);
+  filter_hosts_dead->setIcon(QIcon(":/images/filter-online.png"));
   filter_hosts_dead->setCheckable(true);
   connect(filter_hosts_dead, SIGNAL(toggled(bool)),
           proxy_hostlist, SLOT(toggleFilter(bool)));
 
-	/** toolbar */
+	/** create main toolbar */
   mainToolBar = addToolBar(tr("&Netmon"));
+  mainToolBar->toggleViewAction()->setEnabled(false);
+  mainToolBar->setFloatable(false);
+  /* add toolbar buttons */
   mainToolBar->addAction(main_update);
-  // mainToolBar->addAction(hosts_expand);
-  // mainToolBar->addAction(hosts_collapse);
   mainToolBar->addAction(filter_hosts_dead);
   mainToolBar->addSeparator();
   mainToolBar->addWidget(commandFilterEdit);
