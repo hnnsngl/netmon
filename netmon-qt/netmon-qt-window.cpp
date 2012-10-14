@@ -248,7 +248,7 @@ void NetmonWindow::updateAll()
 void NetmonWindow::showAboutDialog()
 {
 	QMessageBox::about( this, QString("About Netmon"),
-	                    QString("Netmon version 0.1\n"
+	                    QString("Netmon version 0.2\n"
 	                            "License: GPL version 3 or later\n"
 	                            "Authors: Martin Marenz and Hannes Nagel\n"
 	                            "Sources: git clone ssh://boell.physik.uni-leipzig.de/home/nagel/src/netmon\n" ) );
