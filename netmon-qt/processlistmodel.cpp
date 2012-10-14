@@ -16,16 +16,11 @@ NetmonProcessListModel::NetmonProcessListModel( QObject *parent )
 {
 	// build the host list
 	std::lock_guard<std::mutex> lock_hostList(mutexList);
-	for( const auto& host : hostList )
+	for( const auto& host : hostList ){
 		hostIndex.push_back(host.first);
-
-	// build the header name list
-	auto host = hostList.begin();
-	while( (host != hostList.end()) && (!host->second.alive) ) ++host;
-	for( const auto& head : host->second.HeaderProcessList ){
-		headNames.push_back( head );
 	}
 
+	// setup default column headers and translations
 	column = { "Host", "PID", "CMD", "UID", "STIME", "TIME", "RSS", "C", "S"};
 	header = { "Host", "process", "Command", "User", "Started", "CPU time", "RSS (kB)", "CPU usage", "S" };
 }
@@ -42,7 +37,7 @@ QModelIndex NetmonProcessListModel::index( int row, int col, const QModelIndex &
 	// qDebug("processlistmodel::index row=%d, col=%d", row, col );
 	if( (col < 0) || row < 0 )
 		return QModelIndex();
-	if( static_cast<size_t>(col) >= headNames.size() )
+	if( static_cast<size_t>(col) >= header.size() )
 		return QModelIndex();
 
 	std::lock_guard<std::mutex> lock_hostList(mutexList);
@@ -101,7 +96,7 @@ int NetmonProcessListModel::columnCount( const QModelIndex &parent ) const
 QVariant NetmonProcessListModel::data( const QModelIndex &index, int role ) const
 {
 	int col = index.column();
-	if( static_cast<size_t>(col) >= headNames.size() ) return QVariant();
+	if( static_cast<size_t>(col) >= header.size() ) return QVariant();
 
 	std::lock_guard<std::mutex> lock_hostList(mutexList);
 

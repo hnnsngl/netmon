@@ -114,7 +114,6 @@ void NetmonWindow::createModels()
 	model_processes = new NetmonProcessListModel(this);
 	proxy_processes = new NetmonProcessListProxy(hostSelected, this);
 	proxy_processes->setSourceModel(model_processes);
-	proxy_processes->toggleUserFilter(false);
 
 	/* processes view */
 	view_processes = new QTreeView(this);

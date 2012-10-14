@@ -42,7 +42,6 @@ class NetmonProcessListModel : public QAbstractItemModel
 	NetmonProcessListModel( QObject *parent );
 	~NetmonProcessListModel();
 
-	std::vector<std::string> headNames;
 	std::vector<std::string> column;
 	std::vector<std::string> header;
 
