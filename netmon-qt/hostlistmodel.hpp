@@ -1,5 +1,7 @@
 #pragma once
 
+#include "netmon-hosts.hpp"
+
 #include <QObject>
 #include <QVariant>
 #include <QModelIndex>
@@ -9,8 +11,10 @@ class NetmonHostlistModel : public QAbstractItemModel
 {
 	Q_OBJECT
 
+	NetmonHosts & netmonHosts;
+
 public:
-	NetmonHostlistModel( QObject *parent );
+	NetmonHostlistModel( NetmonHosts & _netmonHosts, QObject *parent );
 	virtual ~NetmonHostlistModel();
 
 	// AbstractItemModel Interface (required methods)	
@@ -20,7 +24,4 @@ public:
 	int columnCount( const QModelIndex& parent = QModelIndex() ) const;
 	virtual QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const;
 	virtual QVariant headerData(int section, Qt::Orientation, int role) const;
-
-private:
-
 };

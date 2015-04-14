@@ -1,14 +1,14 @@
 #pragma once
 
-#include <unordered_map>
 #include <ostream>
-#include <unordered_map>
-
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 typedef std::vector< std::string > HostgroupList;
 typedef std::unordered_map< std::string, std::vector<std::string> > HostnameList;
+typedef std::unordered_map<std::string, int> HostSelectedList;
+
 
 struct NetmonHosts
 {
@@ -19,8 +19,8 @@ struct NetmonHosts
 	HostgroupList hostGroups;
 
 	NetmonHosts( std::string filename )
-		: hostnames( createHostNameTree(filename) )
-		, hostGroups( createHostgroupList(hostnames) )
+		: hostnames( createHostNameTree(filename) ),
+		  hostGroups( createHostgroupList(hostnames) )
 	{}
 
 private:
@@ -44,3 +44,4 @@ private:
 
 /// print the unsorted list of hostgroups in the netmon-hosts file format
 std::ostream& operator<<( std::ostream&, const NetmonHosts& );
+
