@@ -8,6 +8,7 @@ find_package( Boost COMPONENTS program_options system regex )
 link_directories    ( ${Boost_LIBRARY_DIRS} )
 include_directories ( ${Boost_INCLUDE_DIRS} )
 
+find_package( Threads )
 
 # set compiler options
 
@@ -21,8 +22,8 @@ link_directories    ( ${Boost_LIBRARY_DIRS} )
 include_directories ( ${Boost_INCLUDE_DIRS} )
 
 add_library(socket src/socket.cpp)
-set(CORELIBS socket ${Boost_LIBRARIES})
 
+set(CORELIBS socket pthread ${Boost_LIBRARIES})
 
 # include project parts
 include_directories ( include )
