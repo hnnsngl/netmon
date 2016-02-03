@@ -33,7 +33,6 @@ int main(int argc, char **argv)
 	getnetgroup_c(argc, argv);
 
 	std::cout << "Using netgroup.hpp" << std::endl;
-	std::vector<NetGroupTriple> triples = getNetGroupTriples(std::string(argv[1]));
-	for (const auto triple : triples)
+	for ( auto triple : NetGroup(std::string(argv[1])))
 		std::cout << triple.hostname << std::endl;
 }
