@@ -4,8 +4,6 @@ CMAKE_MINIMUM_REQUIRED (VERSION 2.8.6)
 FIND_PACKAGE(Qt4 REQUIRED)
 INCLUDE(${QT_USE_FILE})
 
-# MESSAGE( STATUS ${SOURCES_CPP} )
-
 SET(netmon-qt_SOURCES netmon-qt.cpp
                       ../src/netgroup.cpp
                       ../src/netmon-hosts.cpp
@@ -23,8 +21,6 @@ SET(netmon-qt_HEADERS netmon-qt-window.cpp
 SET(netmon-qt_RESOURCES images.qrc)
 
 SET(LANG translation_en.ts translation_de.ts)
-## obsoleted by AUTOMOC
-## QT4_WRAP_CPP(netmon-qt_HEADERS_MOC ${netmon-qt_HEADERS})
 
 QT4_ADD_RESOURCES(netmon-qt_RESOURCES_RCC ${netmon-qt_RESOURCES})
 QT4_ADD_TRANSLATION(TRANSLATIONS ${LANG})
