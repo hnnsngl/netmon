@@ -33,7 +33,6 @@ int main( int argc, char** argv )
 		}
 
 	int status = 0;
-	int count = 0;
 	int sockd = socket( res->ai_family, res->ai_socktype, res->ai_protocol );
 	if( sockd == -1 )
 		{
@@ -41,7 +40,6 @@ int main( int argc, char** argv )
 			exit(-1);
 		}
 
-	sockaddr_in serv_name;
 
 	const int buffer_size = 1024;
 	char buffer[buffer_size];
