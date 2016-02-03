@@ -44,7 +44,7 @@ void refresh_HostList_blocking(const int port){
   extern HostList   hostList;
   extern std::mutex mutexList;
 
-  auto refresh_host = [&hostList](const std::string& host, const int port) -> HostListItem{
+  auto refresh_host = [](const std::string& host, const int port) -> HostListItem{
     std::string message( recv_full_message( host, port ) );
     return sort_fullMessage( host, message );
   };
