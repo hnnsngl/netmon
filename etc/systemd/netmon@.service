@@ -1,0 +1,6 @@
+[Unit]
+Description=NetMon Per-Connection Server
+
+[Service]
+ExecStart=-/usr/local/bin/netmon-agent
+StandardInput=socket
