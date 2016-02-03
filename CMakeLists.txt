@@ -4,21 +4,10 @@ PROJECT(NetMon)
 # SET(CMAKE_VERBOSE_MAKEFILE true)
 
 # looking for boost
+find_package( Boost COMPONENTS program_options system regex )
+link_directories    ( ${Boost_LIBRARY_DIRS} )
+include_directories ( ${Boost_INCLUDE_DIRS} )
 
-#path to boost with cmake -DBOOST_ROOT=/past/to/boost
-if(BOOST_ROOT)
-  set(BOOST_ROOT ${BOOST_ROOT})
-  message("search for boost dir in " ${BOOST_ROOT})
-endif()
-if(BOOST_INCLUDEDIR)
-  set(BOOST_INCLUDEDIR ${BOOST_INCLUDEDIR})
-  message("search for boost include dir in " ${BOOST_INCLUDEDIR})
-endif()
-if(BOOST_LIBRARYDIR)
-  set(BOOST_LIBRARYDIR ${BOOST_LIBRARYDIR})
-  message("search for boost library dir in " ${BOOST_LIBRARYDIR})
-endif()
-find_package(Boost COMPONENTS program_options system regex REQUIRED)
 
 # set compiler options
 
