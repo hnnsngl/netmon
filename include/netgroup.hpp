@@ -5,8 +5,6 @@
 #include <iostream>
 #include <exception>
 
-#include <netdb.h>
-
 struct NetGroupException : public std::exception
 {
 	virtual const char *what() const throw() { return "Failed to initiate netGroup lookup"; }
@@ -23,13 +21,14 @@ struct NetGroupTriple
 	}
 };
 
+std::vector<NetGroupTriple> getNetGroupTriples(std::string netgroup);
+
 struct NetGroup
 {
-	typedef std::vector<NetGroupTriple> NetGroupTriples;
-	typedef NetGroupTriples::const_iterator iterator;
+	typedef std::vector<NetGroupTriple>::const_iterator iterator;
 
 	const std::string name;
-	const NetGroupTriples triples;
+	const std::vector<NetGroupTriple> triples;
 
 	/// construct NetGroup and perform name service lookup
 	NetGroup(std::string name) : name(name), triples(getNetGroupTriples(name)) {}
@@ -43,25 +42,4 @@ struct NetGroup
 	iterator end() const {return triples.cend();}
 	iterator cbegin() const {return triples.cbegin();}
 	iterator cend() const {return triples.cend();}
-
-      private:
-	NetGroupTriples getNetGroupTriples(std::string netgroup)
-	{
-		std::vector<NetGroupTriple> triples;
-
-		try {
-			if (setnetgrent(netgroup.c_str()) != 1)
-				throw NetGroupException();
-
-			char *hostname, *username, *domainname;
-			while (getnetgrent(&hostname, &username, &domainname) == 1) {
-				triples.push_back(NetGroupTriple(hostname, username, domainname));
-			}
-		} catch (NetGroupException e) {
-			std::cerr << e.what() << " ( for " << netgroup << " )" << std::endl;
-		}
-
-		endnetgrent();
-		return triples;
-	}
 };

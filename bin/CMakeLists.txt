@@ -6,12 +6,14 @@ add_executable (netmon-client             netmon-client.cpp
                                           ../src/netmon-lib.cpp ../src/socket.cpp)
 target_link_libraries(netmon-client       ${CORELIBS})
 
-add_executable (netgroup-example          netgroup-example.cpp)
+add_executable (netgroup-example          netgroup-example.cpp
+                                          ../src/netgroup.cpp)
 
 add_executable (socket-example            socket-example.cpp)
 target_link_libraries(socket-example      ${CORELIBS})
 
 add_executable (netmon-hosts-test         netmon-hosts-test.cpp
-                                          ../src/netmon-hosts.cpp)
+                                          ../src/netmon-hosts.cpp
+                                          ../src/netgroup.cpp)
 target_link_libraries(netmon-hosts-test   ${CORELIBS})
 
