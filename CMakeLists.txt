@@ -13,7 +13,7 @@ find_package( Threads )
 
 # set compiler options
 
-# requires cmake 3.2 -- not yet available everywhere around
+# requires cmake 3.1 -- not yet available everywhere around
 # set(CMAKE_CXX_STANDARD 11)
 
 # enable compiler warnings
