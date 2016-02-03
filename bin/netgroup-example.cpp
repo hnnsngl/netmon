@@ -1,8 +1,7 @@
 #include <iostream>
 #include <vector>
-
 #include <netdb.h>
-#include <netgroup.hpp>
+#include "netgroup.hpp"
 
 void getnetgroup_c( int argc, char** argv )
 {

@@ -34,9 +34,9 @@ include_directories ( ${Boost_INCLUDE_DIRS} )
 add_library(socket src/socket.cpp)
 set(CORELIBS socket ${Boost_LIBRARIES})
 
-# include general stuff
 
-include_directories ( src )
+# include project parts
+include_directories ( include )
 
 add_subdirectory(src)
 add_subdirectory(bin)
