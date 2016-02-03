@@ -1,9 +1,10 @@
-#include "../src/socket.h"
 #include <string>
 #include <iostream>
 #include <future>
 #include <functional>
 #include <vector>
+
+#include "socket.h"
 
 std::string recv_full_message( const std::string& host, const std::string& port ){
   Socket sock;
@@ -15,8 +16,8 @@ std::string recv_full_message( const std::string& host, const std::string& port 
   while( (status = sock.recv(s)) != 0){
     message += s;
   }
-  return message;
   sock.close();
+  return message;
 }
 
 int main ( int argc, char *argv[] )

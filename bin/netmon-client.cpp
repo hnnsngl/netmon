@@ -8,10 +8,10 @@
 #include <mutex>
 #include <boost/program_options.hpp>
 
-#include "../src/socket.h"
-#include "../src/netgroup.hpp"
-#include "../src/netmon-types.hpp"
-#include "../src/netmon-lib.hpp"
+#include "socket.h"
+#include "netgroup.hpp"
+#include "netmon-types.hpp"
+#include "netmon-lib.hpp"
 
 namespace po = boost::program_options;
 

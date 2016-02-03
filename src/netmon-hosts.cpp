@@ -72,7 +72,7 @@ HostnameList NetmonHosts::createHostNameTree( const std::string & filename ) con
 			// list[groupname] = std::vector<std::string>();
 			break;
 		case '@':
-			for(const auto & triple : getNetGroupTriples( item.substr(1) ) ){
+			for(const auto & triple : NetGroup( item.substr(1) ) ){
 				if(triple.hostname.size() > 0)
 					list[groupname].push_back(triple.hostname);
 			}
