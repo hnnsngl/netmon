@@ -1,0 +1,10 @@
+[Unit]
+Description=NetMon Socket for Per-Connection Servers
+
+[Socket]
+# Make sure to restrict access to a trusted network
+ListenStream=9221
+Accept=yes
+
+[Install]
+WantedBy=sockets.target

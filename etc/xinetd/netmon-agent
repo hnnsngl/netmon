@@ -1,6 +1,7 @@
 # netmon-agent (simple replacement for  binary netmon procd daemon)
 #
-# Hannes Nagel, 2012
+# Hannes Nagel (2012)
+# Institut für Theoretische Physik, Universität Leipzig
 # --------------------------------------------------------------------
 # netmon_se is free software;  you can redistribute it and/or modify it
 # under the  terms of the  GNU General Public License  as published by
@@ -22,8 +23,8 @@ service netmon_agent
 	protocol       = tcp
 	wait           = no
 	user           = nobody
-	server         = /usr/local/bin/netmon_agent
-        # allow only computers on the local subnet to contact this service
-	only_from      = 127.0.0.1 139.18.9.0/24
+	server         = /usr/local/bin/netmon-agent
+        # allow only connections from the local subnet
+	only_from      = 127.0.0.1 192.168.0.0/24
 	disable        = no
 }
