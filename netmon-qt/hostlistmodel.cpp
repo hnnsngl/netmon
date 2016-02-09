@@ -9,53 +9,52 @@
 
 #include <mutex>
 
-NetmonHostlistModel::NetmonHostlistModel( NetmonHosts & _netmonHosts, QObject *parent )
-	: QAbstractItemModel(parent),
-	  netmonHosts(_netmonHosts)
-{}
+NetmonHostlistModel::NetmonHostlistModel(NetmonHosts &_netmonHosts, QObject *parent)
+    : QAbstractItemModel(parent), netmonHosts(_netmonHosts)
+{
+}
 
-NetmonHostlistModel::~NetmonHostlistModel()
-{}
+NetmonHostlistModel::~NetmonHostlistModel() {}
 
 extern HostList hostList;
 extern std::mutex mutexList;
 
 // usage of internalId: positive hostitems refer to hostgroups, hostgroups refer to -1
 
-QModelIndex NetmonHostlistModel::index( int row, int col, const QModelIndex &parent ) const
+QModelIndex NetmonHostlistModel::index(int row, int col, const QModelIndex &parent) const
 {
-	if( ! parent.isValid() ){
-		return createIndex( row, col, -1 );
+	if (!parent.isValid()) {
+		return createIndex(row, col, -1);
 	}
 
-	if( parent.internalId() < 0 ){
-		return createIndex( row, col, parent.row() );
+	if (parent.internalId() < 0) {
+		return createIndex(row, col, parent.row());
 	}
 	qDebug("returning invalid index!");
 	return QModelIndex();
 }
 
-QModelIndex NetmonHostlistModel::parent( const QModelIndex &child ) const
+QModelIndex NetmonHostlistModel::parent(const QModelIndex &child) const
 {
-	if( !child.isValid() )
+	if (!child.isValid())
 		return QModelIndex();
 
 	// check if child points to a hostgroup item
-	if( child.internalId() < 0 )
+	if (child.internalId() < 0)
 		return QModelIndex();
 
-	return createIndex( child.internalId(), 0, -1 );
+	return createIndex(child.internalId(), 0, -1);
 }
 
-int NetmonHostlistModel::rowCount( const QModelIndex &parent ) const
+int NetmonHostlistModel::rowCount(const QModelIndex &parent) const
 {
 	// root hast hostgroups as children
-	if( ! parent.isValid() )
+	if (!parent.isValid())
 		return netmonHosts.hostGroups.size();
 
 	// hostgroups have hosts as children
-	if( parent.internalId() == -1 ){
-		std::string group = netmonHosts.hostGroups[ parent.row() ];
+	if (parent.internalId() == -1) {
+		std::string group = netmonHosts.hostGroups[parent.row()];
 		// qDebug("::rowCount (Host level) (%s) --> %d", group.c_str(), netmonHosts.hostnames[group].size() );
 		return netmonHosts.hostnames[group].size();
 	}
@@ -64,23 +63,24 @@ int NetmonHostlistModel::rowCount( const QModelIndex &parent ) const
 	return 0;
 }
 
-int NetmonHostlistModel::columnCount( const QModelIndex &parent ) const
+int NetmonHostlistModel::columnCount(const QModelIndex &parent) const
 {
 	// qDebug("NetmonHostlistModel::columnCount");
 	return 5;
 }
 
-QVariant NetmonHostlistModel::data( const QModelIndex &index, int role ) const
+QVariant NetmonHostlistModel::data(const QModelIndex &index, int role) const
 {
 	// handle invalid data requestsn
-	if( !index.isValid() ) 
+	if (!index.isValid())
 		return QVariant();
 
 	// handle hostgroup data requests
-	if( index.internalId() == -1 )
-		switch(role){
+	if (index.internalId() == -1)
+		switch (role) {
 		case Qt::DisplayRole: // key data to be rendered in the form of text. (QString)
-			if( index.column() == 0 ) return QString::fromStdString(netmonHosts.hostGroups.at(index.row() ));
+			if (index.column() == 0)
+				return QString::fromStdString(netmonHosts.hostGroups.at(index.row()));
 		default:
 			return QVariant();
 		}
@@ -90,50 +90,66 @@ QVariant NetmonHostlistModel::data( const QModelIndex &index, int role ) const
 
 		const std::string group = netmonHosts.hostGroups[index.internalId()];
 		const std::string hostname = netmonHosts.hostnames[group][index.row()];
-		const HostListItem & hostitem = hostList[netmonHosts.hostnames[group][index.row()]];
-		switch(role){
+		const HostListItem &hostitem = hostList[netmonHosts.hostnames[group][index.row()]];
+		switch (role) {
 		case Qt::DisplayRole:
-			switch(index.column()){
-			case 0: return QString::fromStdString(hostname);
-			case 1: if(hostitem.alive) return QString("%2 (%1 cores)")
-				                           .arg(hostitem.processors) .arg(hostitem.cpuname.c_str());
-			case 2: if(hostitem.alive) return QString::fromStdString(hostitem.memory);
-			case 3: if(hostitem.alive) return QString::fromStdString(hostitem.load);
-			case 4: if(hostitem.alive) return QString::fromStdString(hostitem.uptime);
+			switch (index.column()) {
+			case 0:
+				return QString::fromStdString(hostname);
+			case 1:
+				if (hostitem.alive)
+					return QString("%2 (%1 cores)").arg(hostitem.processors).arg(
+					    hostitem.cpuname.c_str());
+			case 2:
+				if (hostitem.alive)
+					return QString::fromStdString(hostitem.memory);
+			case 3:
+				if (hostitem.alive)
+					return QString::fromStdString(hostitem.load);
+			case 4:
+				if (hostitem.alive)
+					return QString::fromStdString(hostitem.uptime);
 			default:
 				return QVariant();
 			}
 			return QVariant();
 
 		case Qt::ToolTipRole:
-			switch( index.column() ){
-			case 1: return QString::fromStdString(hostitem.tooltip_cpu);
-			case 2: return QString::fromStdString(hostitem.meminfo);
-			case 3: return QString::fromStdString(hostitem.tooltip_load);
+			switch (index.column()) {
+			case 1:
+				return QString::fromStdString(hostitem.tooltip_cpu);
+			case 2:
+				return QString::fromStdString(hostitem.meminfo);
+			case 3:
+				return QString::fromStdString(hostitem.tooltip_load);
 			}
 			return QVariant();
 
 		case Qt::BackgroundRole:
-			switch( index.column() ){
+			switch (index.column()) {
 			case 3:
-				if( ! hostitem.alive ) return QVariant();
-				int hue = 120 - 60*hostitem.avgload1/std::max(1,hostitem.processors);
-				QColor color = QColor::fromHsv(std::max(0, std::min(359, static_cast<int>(hue))) , 255, 255 );
+				if (!hostitem.alive)
+					return QVariant();
+				int hue = 120 - 60 * hostitem.avgload1 / std::max(1, hostitem.processors);
+				QColor color =
+				    QColor::fromHsv(std::max(0, std::min(359, static_cast<int>(hue))), 255, 255);
 				return QBrush(color);
 			}
 			return QVariant();
 
 		case Qt::DecorationRole:
-			switch(index.column()){
+			switch (index.column()) {
 			case 0:
-				if( hostitem.alive )
+				if (hostitem.alive)
 					return QVariant(QPixmap(":/images/host-ok.png").scaledToHeight(12));
-				else return QVariant(QPixmap(":/images/host-down.png").scaledToHeight(12));
+				else
+					return QVariant(QPixmap(":/images/host-down.png").scaledToHeight(12));
 			case 3:
-				if( ! hostitem.alive ) return QVariant();
-				if( (hostitem.avgload1 > hostitem.avgload2) && (hostitem.avgload2 > hostitem.avgload3) )
+				if (!hostitem.alive)
+					return QVariant();
+				if ((hostitem.avgload1 > hostitem.avgload2) && (hostitem.avgload2 > hostitem.avgload3))
 					return QPixmap(":/images/arrow-up.png").scaledToHeight(12);
-				if( (hostitem.avgload1 < hostitem.avgload2) && (hostitem.avgload2 < hostitem.avgload3) )
+				if ((hostitem.avgload1 < hostitem.avgload2) && (hostitem.avgload2 < hostitem.avgload3))
 					return QPixmap(":/images/arrow-down.png").scaledToHeight(12);
 				return QPixmap(":/images/arrow-none.png").scaledToHeight(12);
 			}
@@ -148,10 +164,10 @@ QVariant NetmonHostlistModel::data( const QModelIndex &index, int role ) const
 
 QVariant NetmonHostlistModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	switch( role ){
+	switch (role) {
 	case Qt::DisplayRole:
-		if( orientation == Qt::Horizontal ){
-			switch( section ){
+		if (orientation == Qt::Horizontal) {
+			switch (section) {
 			case 0:
 				return QString(tr("Host"));
 			case 1:
@@ -164,9 +180,10 @@ QVariant NetmonHostlistModel::headerData(int section, Qt::Orientation orientatio
 				return QString(tr("Uptime"));
 			}
 		}
-		return QString("%1") .arg(section);	
+		return QString("%1").arg(section);
 	case Qt::SizeHintRole:
-		if(section == 0) return QSize(0,0);
+		if (section == 0)
+			return QSize(0, 0);
 	}
 	return QVariant();
 }

@@ -12,13 +12,13 @@ class NetmonHostlistProxy : public QSortFilterProxyModel
 	NetmonHosts &netmonHosts;
 	bool filterEnabled;
 
-public:
-	NetmonHostlistProxy(NetmonHosts& netmonHosts, QObject *parent = 0);
+      public:
+	NetmonHostlistProxy(NetmonHosts &netmonHosts, QObject *parent = 0);
 
-public slots:
+      public slots:
 	void toggleFilter(bool enable);
 
-protected:
-	bool filterAcceptsRow( int sourceRow, const QModelIndex &sourceParent ) const;
-	bool lessThan( const QModelIndex &lhs, const QModelIndex &rhs ) const;
+      protected:
+	bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
+	bool lessThan(const QModelIndex &lhs, const QModelIndex &rhs) const;
 };

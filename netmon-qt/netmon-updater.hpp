@@ -10,25 +10,14 @@ class NetmonUpdateThread : public QThread
 	bool forceit;
 	bool enabled;
 
-public:
-	NetmonUpdateThread(QObject * parent , int _interval);
+      public:
+	NetmonUpdateThread(QObject *parent, int _interval);
 	void run();
 	void setInterval();
-	// void setEnabled(bool);
+// void setEnabled(bool);
 signals:
 	void updatedHostList();
 
-public slots:
+      public slots:
 	void forceUpdate();
 };
-
-
-
-
-
-
-
-
-
-
-

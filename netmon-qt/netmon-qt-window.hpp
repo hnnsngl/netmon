@@ -31,19 +31,19 @@ class NetmonWindow : public QMainWindow
 {
 	Q_OBJECT
 
-public:
+      public:
 	NetmonWindow();
 	// NetmonWindow( int argc, char** argv );
 	virtual ~NetmonWindow();
 
-public slots:
+      public slots:
 	void filterUpdate();
-	void HostSelectionChanged ( const QItemSelection & selected, const QItemSelection & deselected );
+	void HostSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 	void updateAll();
 
 	void showAboutDialog();
 
-private:
+      private:
 	NetmonHosts netmonHosts;
 	HostSelections hostSelected;
 
@@ -56,7 +56,7 @@ private:
 
 	NetmonProcessListModel *model_processes;
 	NetmonProcessListProxy *proxy_processes;
-	QTreeView * view_processes;
+	QTreeView *view_processes;
 
 	QToolBar *mainToolBar;
 
@@ -69,19 +69,3 @@ private:
 	void createModels();
 	void createToolbar();
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

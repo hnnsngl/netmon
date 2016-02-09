@@ -17,7 +17,7 @@ class NetmonProcessListProxy : public QSortFilterProxyModel
 {
 	Q_OBJECT
 
-	HostSelections & hostSelected;
+	HostSelections &hostSelected;
 
 	bool userFilter;
 	int userFilterColumn;
@@ -25,17 +25,16 @@ class NetmonProcessListProxy : public QSortFilterProxyModel
 	bool commandFilter;
 	QString commandFilterString;
 
-public:
+      public:
+	NetmonProcessListProxy(HostSelections &selections, QObject *parent = 0);
 
-	NetmonProcessListProxy( HostSelections & selections, QObject *parent = 0 );
+      public slots:
+	void toggleUserFilter(bool enable);
+	void updateUserFilter(const QString &text);
+	void toggleCommandFilter(bool enable);
+	void updateCommandFilter(const QString &text);
 
-public slots:
-	void toggleUserFilter( bool enable );
-	void updateUserFilter( const QString & text );
-	void toggleCommandFilter( bool enable );
-	void updateCommandFilter( const QString & text );
-
-protected:
-	bool filterAcceptsRow( int sourceRow, const QModelIndex &sourceParent ) const;
-	bool lessThan( const QModelIndex &left, const QModelIndex &right ) const;
+      protected:
+	bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
+	bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
 };
