@@ -1,15 +1,15 @@
 #include "netmon-lib.hpp"
 #include "socket.h"
 
-#include <vector>
 #include <utility>
-#include <thread>
-#include <future>
 #include <limits>
+#include <future>
+#include <vector>
+#include <regex>
+#include <thread>
 #include <unordered_map>
 #include <sstream>
 #include <iostream>
-#include <boost/regex.hpp>
 
 
 void          refresh_HostListItem( const std::string& host, const int port ){
@@ -95,17 +95,23 @@ HostListItem sort_fullMessage(const std::string& host, const std::string& messag
   // parse hostname
   tmpitem.hostname = system.substr(0, system.find_first_of("\n"));
   // parse agent-string
-  boost::regex sysreg(R"(netmon-agent\s(\d+.\d+))");
-  boost::smatch res;
-  if( boost::regex_search(system, res, sysreg) )  tmpitem.agentversion = res[1];
-  else                                            tmpitem.agentversion = "No Info";
+  std::regex sysreg(R"(netmon-agent\s(\d+.\d+))");
+  std::smatch res;
+  if (std::regex_search(system, res, sysreg)) {
+	  tmpitem.agentversion = res[1];
+  } else {
+	  tmpitem.agentversion = "No Info";
+  }
   // parse uptime
   sysreg = (R"(up\s(\d+\s\w+))");
-  if( boost::regex_search(system, res, sysreg) )  tmpitem.uptime = res[1];
-  else                                            tmpitem.uptime = "No Info";
+  if( std::regex_search(system, res, sysreg) ) {
+	  tmpitem.uptime = res[1];
+  } else {
+	  tmpitem.uptime = "No Info";
+  }
   // parse laod
   sysreg = R"(load average:\s(\d+.\d+),\s(\d+.\d+),\s(\d+.\d+))";
-  if( boost::regex_search(system, res, sysreg) ){
+  if( std::regex_search(system, res, sysreg) ){
     std::stringstream ss1, ss2, ss3;
     ss1 << res[1]; ss1 >> tmpitem.avgload1;
     ss2 << res[2]; ss2 >> tmpitem.avgload2;
@@ -137,17 +143,17 @@ HostListItem sort_fullMessage(const std::string& host, const std::string& messag
 
   // parse cpuinfo
   // parse model name
-  boost::regex  reg(R"(model name\s*:\s([a-zA-Z0-9/(/) ]*))");
-  if( boost::regex_search(cpuinfo, res, reg) )  tmpitem.cpuname = res[1];
+  std::regex  reg(R"(model name\s*:\s([a-zA-Z0-9/(/) ]*))");
+  if( std::regex_search(cpuinfo, res, reg) )  tmpitem.cpuname = res[1];
   else                                          tmpitem.cpuname = "No Info";
   // parse number of processors
   ss.str("");ss.clear();
   reg = R"(cpu cores\s*:\s(\d+))";
-  if( boost::regex_search(cpuinfo, res, reg) )  {ss << res[1]; ss >> tmpitem.processors;}
+  if( std::regex_search(cpuinfo, res, reg) )  {ss << res[1]; ss >> tmpitem.processors;}
   else                                          tmpitem.processors = std::numeric_limits<int>::quiet_NaN();
 
   reg = R"(cache size\s*:\s(\d+))";
-  boost::regex_search(cpuinfo, res, reg);
+  std::regex_search(cpuinfo, res, reg);
   ss.str(""); ss.clear();
   ss << tmpitem.cpuname << "\n";
   ss << "Number cores: " << tmpitem.processors << "\n";

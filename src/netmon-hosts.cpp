@@ -1,12 +1,11 @@
 #include "netmon-hosts.hpp"
 #include "netgroup.hpp"
 
-#include <boost/regex.hpp>
-
 #include <algorithm>
 #include <fstream>
-#include <string>
 #include <locale>
+#include <regex>
+#include <string>
 
 HostgroupList NetmonHosts::createHostgroupList( const HostnameList & hostnames ) const
 {
@@ -24,9 +23,8 @@ std::vector<std::string> parseHostlistFile( std::string filename )
 	std::locale loc;
 	std::vector<std::string> list;
 
-	// boost::regex pattern (R"([:alpha:][^ \t\n]*|@[:alpha:][^ \t\n#]*|\[[]^]\]|#.*$|)");
-	boost::regex pattern
-		(R"(^[[:s:]]*([\@]?[[:alpha:]][\w\.\-]+|\[.+\])[[:s:]]*)", boost::regex::perl);
+	std::regex pattern
+		(R"(^[[:s:]]*([\@]?[[:alpha:]][\w\.\-]+|\[.+\])[[:s:]]*)", std::regex_constants::ECMAScript);
 	std::ifstream in(filename);
 	// if file does not exist, create file contents 
 	// TODO: do error handling for files
@@ -46,8 +44,8 @@ std::vector<std::string> parseHostlistFile( std::string filename )
 	// read line by line, push matches to list to be processed later
 	std::string input;
 	while( std::getline( in, input ) ){
-		boost::smatch match;
-		while( boost::regex_search( input, match, pattern ) ) {
+		std::smatch match;
+		while( std::regex_search( input, match, pattern ) ) {
 			list.push_back(match[1]);
 			input.erase(0, match.length());
 		}
