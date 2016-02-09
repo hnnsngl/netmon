@@ -11,21 +11,21 @@
 #include <sstream>
 #include <iostream>
 
-
-void          refresh_HostListItem( const std::string& host, const int port ){
+void refreshHostListItem(const std::string &host, const int port)
+{
   extern HostList hostList;
   extern std::mutex mutexList;
-  HostListItem tmp = build_HostListItem(host, port);
+  HostListItem tmp = buildHostListItem(host, port);
   mutexList.lock();
   hostList[ host ] = std::move(tmp);
   mutexList.unlock();
 }
 
-HostListItem  build_HostListItem( const std::string& host, const int port ){
-  return sort_fullMessage( host, recv_full_message( host, port) );
+HostListItem  buildHostListItem( const std::string& host, const int port ){
+  return sortFullMessage( host, receiveFullMessage( host, port) );
 }
 
-std::string recv_full_message( const std::string& host, const int port ){
+std::string receiveFullMessage( const std::string& host, const int port ){
   Socket sock;
   sock.create();
   std::string s("");
@@ -40,13 +40,13 @@ std::string recv_full_message( const std::string& host, const int port ){
   return message;
 }
 
-void refresh_HostList_blocking(const int port){
+void refreshHostListBlocking(const int port){
   extern HostList   hostList;
   extern std::mutex mutexList;
 
   auto refresh_host = [](const std::string& host, const int port) -> HostListItem{
-    std::string message( recv_full_message( host, port ) );
-    return sort_fullMessage( host, message );
+    std::string message( receiveFullMessage( host, port ) );
+    return sortFullMessage( host, message );
   };
   std::unordered_map<std::string, std::future<HostListItem>> task_list;
   for(auto& host: hostList){
@@ -60,7 +60,7 @@ void refresh_HostList_blocking(const int port){
   }
 }
 
-HostListItem sort_fullMessage(const std::string& host, const std::string& message){
+HostListItem sortFullMessage(const std::string& host, const std::string& message){
   std::stringstream ss;
   HostListItem tmpitem(host);
   if( message.empty() ){
@@ -211,7 +211,7 @@ HostListItem sort_fullMessage(const std::string& host, const std::string& messag
   return tmpitem;
 }
 
-void print_HostList( bool printProcesses ){
+void printHostList( bool printProcesses ){
   extern HostList hostList;
   for( auto &host: hostList ){
     std::cout << "##### " << host.second.hostname << " #####\n";

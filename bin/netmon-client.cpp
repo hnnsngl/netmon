@@ -60,8 +60,8 @@ int main( int argc, char** argv )
   for( auto &host: netmonHosts ){
     hostList[host] = HostListItem(host);
   }
-  refresh_HostList_blocking(port);
-  print_HostList();
+  refreshHostListBlocking(port);
+  printHostList();
   }
   catch( std::exception& e ){
     std::cerr << e.what();

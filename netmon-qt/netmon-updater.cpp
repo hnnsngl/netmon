@@ -17,7 +17,7 @@ void NetmonUpdateThread::run()
 
 	while(true){
 		// qDebug("start update...");
-		refresh_HostList_blocking(9221);
+		refreshHostListBlocking(9221);
 		emit updatedHostList();
 		// qDebug("finished update");
 
